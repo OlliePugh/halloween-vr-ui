@@ -1,5 +1,6 @@
 import Wall from "../TyleTypes/Wall";
 import Table from "../TyleTypes/Table";
+import WallWithPainting from "../TyleTypes/WallWithPainting";
 
 const tools = {
     Wall: {
@@ -11,6 +12,10 @@ const tools = {
         type: Table,
         width: 2,
         hight: 1
+    },
+    WallWithPainting: {
+        name: "Wall With Painting",
+        type: WallWithPainting
     }
 };
 

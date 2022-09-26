@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import MapTile from "../MapTile";
 
-const CELL_WIDTH = 40;
+const CELL_WIDTH = 100;
 
 const MapCreator = ({ width, height, currentTool }) => {
     const [tiles, setTiles] = useState(

@@ -38,7 +38,7 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                         }}
                         disabled={currentTool.name === toolName}
                     >
-                        {toolName}
+                        {tool.name || toolName}
                     </button>
                 );
             })}
