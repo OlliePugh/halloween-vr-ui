@@ -1,34 +1,21 @@
-import Draggable from "react-draggable";
-import { useState } from "react";
-
-export default ({ data, row, col, moveTileCallback, cellWidth }) => {
-    const [startDragPos, setStartDragPos] = useState({});
+const MapTile = ({ data, row, col, clickCallback, cellWidth }) => {
+    const BlockType = data?.type || (() => {});
 
     return (
-        <Draggable
-            onStop={(event) => {
-                moveTileCallback(row, col, {
-                    x: event.clientX - startDragPos.x,
-                    y: event.clientY - startDragPos.y
-                });
+        <div
+            onClick={() => {
+                clickCallback(row, col);
             }}
-            onStart={(event) => {
-                setStartDragPos({ x: event.clientX, y: event.clientY });
+            style={{
+                width: `${cellWidth}px`,
+                height: `${cellWidth}px`,
+                border: "1px solid black",
+                gridArea: `${row + 1} / ${col + 1} / ${row + 2} / ${col + 2}`
             }}
-            disabled={data == undefined}
-            position={{ x: 0, y: 0 }}
         >
-            <div
-                style={{
-                    width: `${cellWidth}px`,
-                    height: `${cellWidth}px`,
-                    border: "1px solid black",
-                    gridArea: `${row + 1} / ${col + 1} / ${row + 2} / ${
-                        col + 2
-                    }`,
-                    backgroundColor: data?.backgroundColor
-                }}
-            ></div>
-        </Draggable>
+            <BlockType />
+        </div>
     );
 };
+
+export default MapTile;
