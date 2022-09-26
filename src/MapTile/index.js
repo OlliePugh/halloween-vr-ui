@@ -1,5 +1,5 @@
 const MapTile = ({ data, row, col, clickCallback, cellWidth }) => {
-    const BlockType = data?.type || (() => {});
+    const BlockType = data?.type.type || (() => {});
 
     return (
         <div

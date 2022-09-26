@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import tools from "./tools";
-import { placeBlock } from "./utils";
+import { placeBlock, getRotatedDimensions } from "./utils";
 
 const Toolbar = ({ setCurrentTool, currentTool }) => {
     const [rotation, setRotation] = useState(0);
+    const rotationRef = useRef();
+
+    rotationRef.current = rotation;
 
     return (
         <div
@@ -14,6 +17,14 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                 backgroundColor: "grey"
             }}
         >
+            <button
+                onClick={() => {
+                    setRotation(rotation + Math.PI / 2);
+                }}
+            >
+                Rotate
+            </button>
+
             {Object.keys(tools).map((toolName) => {
                 const tool = tools[toolName];
                 return (
@@ -26,12 +37,9 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                     return placeBlock(
                                         tiles,
                                         clickedPos,
-                                        {
-                                            width: tool.width || 1,
-                                            height: tool.height || 1
-                                        },
-                                        rotation,
-                                        tool.type
+                                        tool.dimensions,
+                                        rotationRef,
+                                        { ...tool, key: toolName }
                                     );
                                 }
                             });
@@ -49,7 +57,38 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                         name: "delete",
                         trigger: (tiles, clickedPos) => {
                             const newTiles = [...tiles];
-                            newTiles[clickedPos.col][clickedPos.row] = null;
+                            const tileToDelete =
+                                newTiles[clickedPos.col][clickedPos.row];
+
+                            if (!tileToDelete?.type) {
+                                // is there anything on that tile
+                                return newTiles;
+                            }
+                            // loop through and delete each child
+                            const { width, height } =
+                                tools[tileToDelete.type.key].dimensions;
+
+                            if (tileToDelete?.parent) {
+                                // if it has a parent delete from the parents position
+                                clickedPos = tileToDelete?.parent;
+                            }
+                            const { rotatedHeight, rotatedWidth } =
+                                getRotatedDimensions(tileToDelete.rotation, {
+                                    width,
+                                    height
+                                });
+
+                            for (let i = 0; i < Math.abs(rotatedWidth); i++) {
+                                for (
+                                    let j = 0;
+                                    j < Math.abs(rotatedHeight);
+                                    j++
+                                ) {
+                                    newTiles[clickedPos.col + i][
+                                        clickedPos.row + j
+                                    ] = null;
+                                }
+                            }
                             return newTiles;
                         }
                     });

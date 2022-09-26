@@ -5,17 +5,16 @@ import WallWithPainting from "../TyleTypes/WallWithPainting";
 const tools = {
     Wall: {
         type: Wall,
-        width: 1,
-        height: 1
+        dimensions: { width: 1, height: 1 }
     },
     Table: {
         type: Table,
-        width: 2,
-        hight: 1
+        dimensions: { width: 2, height: 1 }
     },
     WallWithPainting: {
         name: "Wall With Painting",
-        type: WallWithPainting
+        type: WallWithPainting,
+        dimensions: { width: 1, height: 1 }
     }
 };
 

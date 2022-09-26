@@ -17,22 +17,31 @@ const MapCreator = ({ width, height, currentTool }) => {
     );
 
     return (
-        <div style={{ display: "inline-grid", width: width * CELL_WIDTH }}>
-            {tiles.map((col, colNum) => {
-                return col.map((tile, rowNum) => {
-                    return (
-                        <MapTile
-                            clickCallback={clickCallback}
-                            cellWidth={CELL_WIDTH}
-                            data={tile}
-                            key={rowNum + "" + colNum}
-                            row={rowNum}
-                            col={colNum}
-                        />
-                    );
-                });
-            })}
-        </div>
+        <>
+            <button
+                onClick={() => {
+                    console.log(JSON.stringify(tiles));
+                }}
+            >
+                Export to JSON
+            </button>
+            <div style={{ display: "inline-grid", width: width * CELL_WIDTH }}>
+                {tiles.map((col, colNum) => {
+                    return col.map((tile, rowNum) => {
+                        return (
+                            <MapTile
+                                clickCallback={clickCallback}
+                                cellWidth={CELL_WIDTH}
+                                data={tile}
+                                key={rowNum + "" + colNum}
+                                row={rowNum}
+                                col={colNum}
+                            />
+                        );
+                    });
+                })}
+            </div>
+        </>
     );
 };
 
