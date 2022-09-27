@@ -8,10 +8,4 @@ const Table = () => {
     );
 };
 
-export const TableTool = (tiles, { row, col }) => {
-    const newTiles = [...tiles];
-    newTiles[col][row].type = Table;
-    return newTiles;
-};
-
 export default Table;

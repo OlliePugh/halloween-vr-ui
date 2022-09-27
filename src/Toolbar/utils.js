@@ -12,6 +12,14 @@ export const placeBlock = (
     });
 
     const newTiles = [...tiles];
+
+    const amount = getAmountOfTile(newTiles, type);
+
+    if (amount >= type.max) {
+        // cannot add anymore as already too many
+        return newTiles;
+    }
+
     for (let i = col; i < col + Math.abs(rotatedWidth); i++) {
         for (let j = row; j < row + Math.abs(rotatedHeight); j++) {
             // check all required slots are free and valid
@@ -34,6 +42,19 @@ export const placeBlock = (
         }
     }
     return newTiles;
+};
+
+const getAmountOfTile = (tiles, type) => {
+    let counter = 0;
+    tiles.forEach((columns) => {
+        columns.forEach((cell) => {
+            if (cell?.type?.key === type.key) {
+                counter++;
+            }
+        });
+    });
+
+    return counter;
 };
 
 export const getRotatedDimensions = (rotation, { width, height }) => {
