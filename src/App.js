@@ -13,7 +13,7 @@ function App() {
                 setCurrentTool={setCurrentTool}
                 currentTool={currentTool}
             />
-            <MapCreator width={25} height={25} currentTool={currentTool} />
+            <MapCreator width={5} height={5} currentTool={currentTool} />
         </div>
     );
 }

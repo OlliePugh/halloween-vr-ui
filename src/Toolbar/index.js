@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import tools from "./tools";
-import { placeBlock, getRotatedDimensions } from "./utils";
+import { placeBlock, getRotatedDimensions, getOccupyingCells } from "./utils";
 import { ERROR_MESSAGES } from "../consts";
 
 const Toolbar = ({ setCurrentTool, currentTool }) => {
@@ -77,30 +77,24 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                             if (tileToDelete?.parent) {
                                 // if it has a parent delete from the parents position
                                 clickedPos = tileToDelete?.parent;
+                                console.log(tileToDelete);
+                                console.log(clickedPos);
                             }
+
                             const { rotatedHeight, rotatedWidth } =
                                 getRotatedDimensions(tileToDelete.rotation, {
                                     width,
                                     height
                                 });
 
-                            for (
-                                let i = clickedPos.col;
-                                rotatedWidth > 0
-                                    ? i < clickedPos.col + +rotatedWidth
-                                    : i > clickedPos.col + +rotatedWidth;
-                                rotatedWidth > 0 ? i++ : i--
-                            ) {
-                                for (
-                                    let j = clickedPos.row;
-                                    rotatedHeight > 0
-                                        ? j < clickedPos.row + rotatedHeight
-                                        : j > clickedPos.row + rotatedHeight;
-                                    rotatedHeight > 0 ? j++ : j--
-                                ) {
-                                    newTiles[i][j] = null;
-                                }
-                            }
+                            const occupyingCells = getOccupyingCells(
+                                { col: clickedPos.col, row: clickedPos.row },
+                                { rotatedHeight, rotatedWidth }
+                            );
+
+                            occupyingCells.forEach(([col, row]) => {
+                                newTiles[col][row] = null;
+                            });
                             return newTiles;
                         }
                     });

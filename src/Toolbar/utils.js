@@ -23,51 +23,34 @@ export const placeBlock = (
         throw Error(ERRORS.MAX_BLOCK_REACHED);
     }
 
-    for (
-        let i = col;
-        rotatedWidth > 0 ? i < col + rotatedWidth : i > col + rotatedWidth;
-        rotatedWidth > 0 ? i++ : i--
-    ) {
-        for (
-            let j = row;
-            rotatedHeight > 0
-                ? j < row + rotatedHeight
-                : j > row + rotatedHeight;
-            rotatedHeight > 0 ? j++ : j--
+    const occupyingCells = getOccupyingCells(
+        { col, row },
+        { rotatedWidth, rotatedHeight }
+    );
+
+    occupyingCells.forEach(([col, row]) => {
+        if (
+            col >= newTiles.length ||
+            col < 0 ||
+            row < 0 ||
+            row >= newTiles[col].length ||
+            newTiles[col][row]?.type
         ) {
-            // check all required slots are free and valid
-            if (
-                i >= newTiles.length ||
-                j >= newTiles[i].length ||
-                newTiles[i][j]?.type
-            ) {
-                // if the block has a type
-                throw Error(ERRORS.OVERLAPPING_BLOCK);
-            }
+            // if the block has a type
+            throw Error(ERRORS.OVERLAPPING_BLOCK);
         }
-    }
+    });
 
     // check if the space is already occupied
-    for (
-        let i = col;
-        rotatedWidth > 0 ? i < col + rotatedWidth : i > col + rotatedWidth;
-        rotatedWidth > 0 ? i++ : i--
-    ) {
-        // modify the array (when done in loop a pointer is midified somewhere and funky behaviour occurs)
-        for (
-            let j = row;
-            rotatedHeight > 0
-                ? j < row + rotatedHeight
-                : j > row + rotatedHeight;
-            rotatedHeight > 0 ? j++ : j--
-        ) {
-            newTiles[i][j] = {
-                type,
-                parent: { col, row },
-                rotation
-            };
-        }
-    }
+
+    occupyingCells.forEach(([placeCol, placeRow]) => {
+        newTiles[placeCol][placeRow] = {
+            type,
+            parent: { col, row },
+            rotation
+        };
+    });
+
     return newTiles;
 };
 
@@ -98,4 +81,23 @@ export const getRotatedDimensions = (rotation, { width, height }) => {
     };
 
     return rotatedDimensions;
+};
+
+export const getOccupyingCells = (
+    { col, row },
+    { rotatedWidth, rotatedHeight }
+) => {
+    const cells = [];
+    for (let i = col; i !== col + rotatedWidth; rotatedWidth > 0 ? i++ : i--) {
+        // modify the array (when done in loop a pointer is midified somewhere and funky behaviour occurs)
+        for (
+            let j = row;
+            j !== row + rotatedHeight;
+            rotatedHeight > 0 ? j++ : j--
+        ) {
+            cells.push([i, j]);
+        }
+    }
+
+    return cells;
 };
