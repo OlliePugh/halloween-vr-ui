@@ -33,8 +33,13 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                         key={toolName}
                         onClick={() => {
                             setCurrentTool({
+                                ...tool,
                                 name: toolName,
-                                trigger: (tiles, clickedPos) => {
+                                trigger: (
+                                    tiles,
+                                    clickedPos,
+                                    ignoredExceptions
+                                ) => {
                                     try {
                                         return placeBlock(
                                             tiles,
@@ -44,7 +49,13 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                             { ...tool, key: toolName }
                                         );
                                     } catch (e) {
-                                        alert(ERROR_MESSAGES[e.message]);
+                                        if (
+                                            !ignoredExceptions?.includes(
+                                                e.message
+                                            )
+                                        ) {
+                                            alert(ERROR_MESSAGES[e.message]);
+                                        }
                                         return tiles;
                                     }
                                 }

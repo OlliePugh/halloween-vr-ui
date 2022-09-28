@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import MapTile from "../MapTile";
+import { ERRORS } from "../consts";
 
 const CELL_WIDTH = 100;
 
@@ -8,9 +9,19 @@ const MapCreator = ({ width, height, currentTool }) => {
         [...Array(width)].map((_) => Array(height).fill(null))
     );
 
-    const clickCallback = useCallback(
-        (row, col) => {
-            const newTiles = currentTool.trigger(tiles, { row, col });
+    const modifyCallback = useCallback(
+        (row, col, isDrag) => {
+            let newTiles = tiles;
+            if (isDrag && currentTool.draggable) {
+                newTiles = currentTool.trigger(tiles, { row, col }, [
+                    ERRORS.OVERLAPPING_BLOCK
+                ]); // ignore overlapping block messages
+            }
+
+            if (!isDrag) {
+                newTiles = currentTool.trigger(tiles, { row, col }, []); // display spot taken messages
+            }
+
             setTiles(newTiles);
         },
         [currentTool, tiles]
@@ -30,7 +41,7 @@ const MapCreator = ({ width, height, currentTool }) => {
                     return col.map((tile, rowNum) => {
                         return (
                             <MapTile
-                                clickCallback={clickCallback}
+                                modifyCallback={modifyCallback}
                                 cellWidth={CELL_WIDTH}
                                 data={tile}
                                 key={rowNum + "" + colNum}

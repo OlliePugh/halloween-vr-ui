@@ -1,10 +1,15 @@
-const MapTile = ({ data, row, col, clickCallback, cellWidth }) => {
+import { ERRORS } from "../consts";
+
+const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
     const BlockType = data?.type.type || (() => {});
 
     return (
         <div
             onClick={() => {
-                clickCallback(row, col);
+                modifyCallback(row, col, false);
+            }}
+            onDragOver={() => {
+                modifyCallback(row, col, true);
             }}
             style={{
                 width: `${cellWidth}px`,

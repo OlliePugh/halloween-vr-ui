@@ -7,7 +7,8 @@ import SpawnPoint from "../TyleTypes/SpawnPoint";
 const tools = {
     Wall: {
         type: Wall,
-        dimensions: { width: 1, height: 1 }
+        dimensions: { width: 1, height: 1 },
+        draggable: true
     },
     Table: {
         type: Table,
@@ -16,7 +17,8 @@ const tools = {
     WallWithPainting: {
         name: "Wall With Painting",
         type: WallWithPainting,
-        dimensions: { width: 1, height: 1 }
+        dimensions: { wdth: 1, height: 1 },
+        draggable: true
     },
     Bed: {
         type: Bed,
