@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import tools from "./tools";
 import { placeBlock, getRotatedDimensions } from "./utils";
+import { ERROR_MESSAGES } from "../consts";
 
 const Toolbar = ({ setCurrentTool, currentTool }) => {
     const [rotation, setRotation] = useState(0);
@@ -34,13 +35,18 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                             setCurrentTool({
                                 name: toolName,
                                 trigger: (tiles, clickedPos) => {
-                                    return placeBlock(
-                                        tiles,
-                                        clickedPos,
-                                        tool.dimensions,
-                                        rotationRef,
-                                        { ...tool, key: toolName }
-                                    );
+                                    try {
+                                        return placeBlock(
+                                            tiles,
+                                            clickedPos,
+                                            tool.dimensions,
+                                            rotationRef,
+                                            { ...tool, key: toolName }
+                                        );
+                                    } catch (e) {
+                                        alert(ERROR_MESSAGES[e.message]);
+                                        return tiles;
+                                    }
                                 }
                             });
                         }}
@@ -78,15 +84,21 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                     height
                                 });
 
-                            for (let i = 0; i < Math.abs(rotatedWidth); i++) {
+                            for (
+                                let i = clickedPos.col;
+                                rotatedWidth > 0
+                                    ? i < clickedPos.col + +rotatedWidth
+                                    : i > clickedPos.col + +rotatedWidth;
+                                rotatedWidth > 0 ? i++ : i--
+                            ) {
                                 for (
-                                    let j = 0;
-                                    j < Math.abs(rotatedHeight);
-                                    j++
+                                    let j = clickedPos.row;
+                                    rotatedHeight > 0
+                                        ? j < clickedPos.row + rotatedHeight
+                                        : j > clickedPos.row + rotatedHeight;
+                                    rotatedHeight > 0 ? j++ : j--
                                 ) {
-                                    newTiles[clickedPos.col + i][
-                                        clickedPos.row + j
-                                    ] = null;
+                                    newTiles[i][j] = null;
                                 }
                             }
                             return newTiles;

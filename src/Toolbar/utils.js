@@ -1,3 +1,5 @@
+import { ERRORS } from "../consts";
+
 export const placeBlock = (
     tiles,
     { row, col },
@@ -11,17 +13,28 @@ export const placeBlock = (
         height
     });
 
+    console.log({ rotatedWidth, rotatedHeight });
     const newTiles = [...tiles];
 
     const amount = getAmountOfTile(newTiles, type);
 
     if (amount >= type.max) {
         // cannot add anymore as already too many
-        return newTiles;
+        throw Error(ERRORS.MAX_BLOCK_REACHED);
     }
 
-    for (let i = col; i < col + Math.abs(rotatedWidth); i++) {
-        for (let j = row; j < row + Math.abs(rotatedHeight); j++) {
+    for (
+        let i = col;
+        rotatedWidth > 0 ? i < col + rotatedWidth : i > col + rotatedWidth;
+        rotatedWidth > 0 ? i++ : i--
+    ) {
+        for (
+            let j = row;
+            rotatedHeight > 0
+                ? j < row + rotatedHeight
+                : j > row + rotatedHeight;
+            rotatedHeight > 0 ? j++ : j--
+        ) {
             // check all required slots are free and valid
             if (
                 i >= newTiles.length ||
@@ -29,16 +42,30 @@ export const placeBlock = (
                 newTiles[i][j]?.type
             ) {
                 // if the block has a type
-                return tiles;
+                throw Error(ERRORS.OVERLAPPING_BLOCK);
             }
         }
     }
 
     // check if the space is already occupied
-    for (let i = col; i < col + Math.abs(rotatedWidth); i++) {
+    for (
+        let i = col;
+        rotatedWidth > 0 ? i < col + rotatedWidth : i > col + rotatedWidth;
+        rotatedWidth > 0 ? i++ : i--
+    ) {
         // modify the array (when done in loop a pointer is midified somewhere and funky behaviour occurs)
-        for (let j = row; j < row + Math.abs(rotatedHeight); j++) {
-            newTiles[i][j] = { type, parent: { col, row }, rotation };
+        for (
+            let j = row;
+            rotatedHeight > 0
+                ? j < row + rotatedHeight
+                : j > row + rotatedHeight;
+            rotatedHeight > 0 ? j++ : j--
+        ) {
+            newTiles[i][j] = {
+                type,
+                parent: { col, row },
+                rotation
+            };
         }
     }
     return newTiles;
