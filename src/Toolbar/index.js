@@ -46,7 +46,11 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                             clickedPos,
                                             tool.dimensions,
                                             rotationRef,
-                                            { ...tool, key: toolName }
+                                            {
+                                                ...tool,
+                                                key: toolName,
+                                                name: tool.name || toolName
+                                            }
                                         );
                                     } catch (e) {
                                         if (

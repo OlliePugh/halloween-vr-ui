@@ -44,6 +44,7 @@ export const placeBlock = (
     // check if the space is already occupied
 
     occupyingCells.forEach(([placeCol, placeRow]) => {
+        console.log(type);
         newTiles[placeCol][placeRow] = {
             type,
             parent: { col, row },

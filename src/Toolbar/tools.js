@@ -1,31 +1,37 @@
-import Wall from "../TyleTypes/Wall";
-import Table from "../TyleTypes/Table";
-import WallWithPainting from "../TyleTypes/WallWithPainting";
-import Bed from "../TyleTypes/Bed";
-import SpawnPoint from "../TyleTypes/SpawnPoint";
-
 const tools = {
     Wall: {
-        type: Wall,
+        tileStyle: {
+            colour: "grey"
+        },
         dimensions: { width: 1, height: 1 },
         draggable: true
     },
     Table: {
-        type: Table,
+        tileStyle: {
+            colour: "green"
+        },
         dimensions: { width: 2, height: 1 }
     },
     WallWithPainting: {
         name: "Wall With Painting",
-        type: WallWithPainting,
-        dimensions: { wdth: 1, height: 1 },
+        tileStyle: {
+            colour: "red"
+        },
+        dimensions: { width: 1, height: 1 },
         draggable: true
     },
     Bed: {
-        type: Bed,
+        tileStyle: {
+            colour: "blue"
+        },
         dimensions: { width: 2, height: 1 }
     },
     SpawnPoint: {
-        type: SpawnPoint,
+        tileStyle: {
+            colour: "black",
+            textColour: "white"
+        },
+        name: "Spawn Point",
         dimensions: { width: 1, height: 1 },
         max: 1,
         min: 1
