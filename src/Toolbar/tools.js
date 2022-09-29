@@ -1,4 +1,14 @@
 const tools = {
+    SpawnPoint: {
+        tileStyle: {
+            colour: "black",
+            textColour: "white"
+        },
+        name: "Spawn Point",
+        dimensions: { width: 1, height: 1 },
+        max: 1,
+        min: 1
+    },
     Wall: {
         tileStyle: {
             colour: "grey"
@@ -10,7 +20,7 @@ const tools = {
         tileStyle: {
             colour: "green"
         },
-        dimensions: { width: 2, height: 1 }
+        dimensions: { width: 2, height: 3 }
     },
     WallWithPainting: {
         name: "Wall With Painting",
@@ -26,15 +36,12 @@ const tools = {
         },
         dimensions: { width: 2, height: 1 }
     },
-    SpawnPoint: {
+    BedsideTable: {
+        name: "Bedside Table",
         tileStyle: {
-            colour: "black",
-            textColour: "white"
+            colour: "yellow"
         },
-        name: "Spawn Point",
-        dimensions: { width: 1, height: 1 },
-        max: 1,
-        min: 1
+        dimensions: { width: 1, height: 1 }
     }
 };
 

@@ -5,10 +5,6 @@ const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
         ...data?.type.tileStyle
     };
 
-    if (data) {
-        console.log(tileStyle);
-    }
-
     return (
         <div
             onClick={() => {
@@ -18,6 +14,7 @@ const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
                 modifyCallback(row, col, true);
             }}
             style={{
+                position: "relative",
                 width: `${cellWidth}px`,
                 height: `${cellWidth}px`,
                 border: "1px solid black",
@@ -25,7 +22,28 @@ const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
                 backgroundColor: tileStyle.colour
             }}
         >
-            <p style={{ color: tileStyle.textColour }}>{data?.type.name}</p>
+            <div
+                style={{
+                    position: "absolute",
+                    margin: 0,
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)"
+                }}
+            >
+                <p
+                    style={{
+                        margin: 0,
+                        textAlign: "center",
+                        color: tileStyle.textColour,
+                        transform: `rotate(${
+                            data?.rotation * (180 / Math.PI)
+                        }deg)`
+                    }}
+                >
+                    {data?.type.name}
+                </p>
+            </div>
         </div>
     );
 };
