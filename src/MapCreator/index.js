@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import MapTile from "../MapTile";
 import { ERRORS } from "../consts";
+import axios from "axios";
 
 const CELL_WIDTH = 100;
 
@@ -32,9 +33,10 @@ const MapCreator = ({ width, height, currentTool }) => {
             <button
                 onClick={() => {
                     console.log(JSON.stringify(tiles));
+                    axios.post("/submit", tiles);
                 }}
             >
-                Export to JSON
+                Submit
             </button>
             <div style={{ display: "inline-grid", width: width * CELL_WIDTH }}>
                 {tiles.map((col, colNum) => {

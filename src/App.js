@@ -2,6 +2,9 @@ import { useState } from "react";
 import "./App.css";
 import MapCreator from "./MapCreator";
 import Toolbar from "./Toolbar";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:8080/";
 
 function App() {
     const [currentTool, setCurrentTool] = useState({

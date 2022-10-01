@@ -13,7 +13,6 @@ export const placeBlock = (
         height
     });
 
-    console.log({ rotatedWidth, rotatedHeight });
     const newTiles = [...tiles];
 
     const amount = getAmountOfTile(newTiles, type);
@@ -44,7 +43,6 @@ export const placeBlock = (
     // check if the space is already occupied
 
     occupyingCells.forEach(([placeCol, placeRow]) => {
-        console.log(type);
         newTiles[placeCol][placeRow] = {
             type,
             parent: { col, row },
