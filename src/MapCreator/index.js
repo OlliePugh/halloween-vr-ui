@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import MapTile from "../MapTile";
 import { ERRORS } from "../consts";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CELL_WIDTH = 100;
 
@@ -9,6 +10,7 @@ const MapCreator = ({ width, height, currentTool }) => {
     const [tiles, setTiles] = useState(
         [...Array(width)].map((_) => Array(height).fill(null))
     );
+    const navigate = useNavigate();
 
     const modifyCallback = useCallback(
         (row, col, isDrag) => {
@@ -32,8 +34,13 @@ const MapCreator = ({ width, height, currentTool }) => {
         <>
             <button
                 onClick={() => {
-                    console.log(JSON.stringify(tiles));
                     axios.post("/submit", tiles);
+                    navigate("/in-game", {
+                        // TODO make this happen only when you are at the front of the queue
+                        state: {
+                            map: tiles
+                        }
+                    });
                 }}
             >
                 Submit

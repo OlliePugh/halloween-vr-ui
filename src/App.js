@@ -1,22 +1,21 @@
-import { useState } from "react";
 import "./App.css";
-import MapCreator from "./MapCreator";
-import Toolbar from "./Toolbar";
 import axios from "axios";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MapMaker from "./Pages/MapMaker";
+import InGame from "./Pages/InGame";
 
-axios.defaults.baseURL = "http://localhost:8080/";
+axios.defaults.baseURL = "http://dev.olliepugh.com:8080/";
+axios.defaults.withCredentials = true;
 
 function App() {
-    const [currentTool, setCurrentTool] = useState({
-        trigger: (tiles) => tiles
-    });
     return (
         <div className="App">
-            <Toolbar
-                setCurrentTool={setCurrentTool}
-                currentTool={currentTool}
-            />
-            <MapCreator width={25} height={25} currentTool={currentTool} />
+            <Router>
+                <Routes>
+                    <Route path="/in-game" element={<InGame />} />
+                    <Route path="*" element={<MapMaker />} />
+                </Routes>
+            </Router>
         </div>
     );
 }
