@@ -33,14 +33,18 @@ const MapCreator = ({ width, height, currentTool }) => {
     return (
         <>
             <button
-                onClick={() => {
-                    axios.post("/submit", tiles);
-                    navigate("/in-game", {
-                        // TODO make this happen only when you are at the front of the queue
-                        state: {
-                            map: tiles
-                        }
-                    });
+                onClick={async () => {
+                    try {
+                        await axios.post("/submit", tiles);
+                        navigate("/in-game", {
+                            // TODO make this happen only when you are at the front of the queue
+                            state: {
+                                map: tiles
+                            }
+                        });
+                    } catch (e) {
+                        alert(`Something went wrong: ${e.message}`);
+                    }
                 }}
             >
                 Submit

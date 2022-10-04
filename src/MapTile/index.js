@@ -1,4 +1,12 @@
-const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
+const MapTile = ({
+    data,
+    row,
+    col,
+    modifyCallback,
+    cellWidth,
+    colour = true,
+    style = {}
+}) => {
     const tileStyle = {
         textColour: "black",
         colour: "white",
@@ -19,7 +27,8 @@ const MapTile = ({ data, row, col, modifyCallback, cellWidth }) => {
                 height: `${cellWidth}px`,
                 border: "1px solid black",
                 gridArea: `${row + 1} / ${col + 1} / ${row + 2} / ${col + 2}`,
-                backgroundColor: tileStyle.colour
+                backgroundColor: colour && tileStyle.colour,
+                ...style
             }}
         >
             <div
