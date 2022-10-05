@@ -36,6 +36,7 @@ const InGameMap = ({ mapData, socket }) => {
         if (tile.triggerable) {
             tile.triggerable = false;
             tile.lastCalled = Date.now();
+            console.log("emitting");
             socket.emit(SOCKET_EVENTS.TRIGGER_EVENT, propKey);
             setTimeout(() => {
                 // set it back to triggerable in the future
