@@ -13,6 +13,8 @@ const MapTile = ({
         ...data?.type.tileStyle
     };
 
+    const isParent = data?.parent.col === col && data?.parent.row === row;
+
     return (
         <div
             onClick={() => {
@@ -25,7 +27,7 @@ const MapTile = ({
                 position: "relative",
                 width: `${cellWidth}px`,
                 height: `${cellWidth}px`,
-                border: "1px solid black",
+                border: `1px solid black`,
                 gridArea: `${row + 1} / ${col + 1} / ${row + 2} / ${col + 2}`,
                 backgroundColor: colour && tileStyle.colour,
                 ...style
@@ -46,8 +48,9 @@ const MapTile = ({
                         textAlign: "center",
                         color: tileStyle.textColour,
                         transform: `rotate(${
-                            data?.rotation * (180 / Math.PI)
-                        }deg)`
+                            data?.rotation * (-180 / Math.PI)
+                        }deg)`,
+                        textDecoration: isParent ? "underline" : "none"
                     }}
                 >
                     {data?.type.name}
