@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { placeBlock, getRotatedDimensions, getOccupyingCells } from "./utils";
-import { ERROR_MESSAGES } from "../consts";
+import Tool from "./tool";
+import { getRotatedDimensions, getOccupyingCells } from "./utils";
+import InspectTile from "../InspectTile";
+
 import axios from "axios";
 
 const Toolbar = ({ setCurrentTool, currentTool }) => {
@@ -22,20 +24,24 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
 
         getTools();
     }, []);
-
     rotationRef.current = rotation;
+
+    console.log(currentTool);
 
     return (
         <>
+            <div style={{ height: "200px", borderBottom: "1px solid black" }}>
+                <h2>{currentTool?.name}</h2>
+                {currentTool?.dimensions && (
+                    <InspectTile
+                        height={currentTool?.dimensions.height}
+                        width={currentTool?.dimensions.width}
+                        rotation={rotation}
+                    />
+                )}
+            </div>
             {tools && (
-                <div
-                    style={{
-                        display: "inline-block",
-                        height: "100%",
-                        width: "100px",
-                        backgroundColor: "grey"
-                    }}
-                >
+                <>
                     <button
                         onClick={() => {
                             setRotation(rotation + Math.PI / 2);
@@ -43,59 +49,19 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                     >
                         Rotate
                     </button>
-
                     {Object.keys(tools).map((toolName) => {
                         const tool = tools[toolName];
                         return (
-                            <button
+                            <Tool
                                 key={toolName}
-                                onClick={() => {
-                                    setCurrentTool({
-                                        ...tool,
-                                        name: toolName,
-                                        trigger: (
-                                            tiles,
-                                            clickedPos,
-                                            ignoredExceptions
-                                        ) => {
-                                            try {
-                                                return placeBlock(
-                                                    tiles,
-                                                    clickedPos,
-                                                    tool.dimensions,
-                                                    rotationRef,
-                                                    {
-                                                        ...tool,
-                                                        key: toolName,
-                                                        name:
-                                                            tool.name ||
-                                                            toolName
-                                                    }
-                                                );
-                                            } catch (e) {
-                                                if (
-                                                    !ignoredExceptions?.includes(
-                                                        e.message
-                                                    )
-                                                ) {
-                                                    alert(
-                                                        ERROR_MESSAGES[
-                                                            e.message
-                                                        ]
-                                                    );
-                                                }
-                                                return tiles;
-                                            }
-                                        }
-                                    });
-                                }}
+                                toolName={toolName}
+                                tool={tool}
+                                setCurrentTool={setCurrentTool}
                                 disabled={currentTool.name === toolName}
-                            >
-                                {tool.name || toolName}
-                            </button>
+                                rotationRef={rotationRef}
+                            />
                         );
                     })}
-
                     <button
                         onClick={() => {
                             setCurrentTool({
@@ -148,7 +114,7 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                     >
                         Delete
                     </button>
-                </div>
+                </>
             )}
         </>
     );
