@@ -71,10 +71,7 @@ const InGameMap = ({ mapData, socket }) => {
                                 key={rowNum + "" + colNum}
                                 row={rowNum}
                                 col={colNum}
-                                colour={
-                                    interactiveTile &&
-                                    interactiveTile.triggerable
-                                }
+                                colour={!!interactiveTile?.triggerable}
                                 style={{
                                     cursor: interactiveTile ? "pointer" : "auto"
                                 }}

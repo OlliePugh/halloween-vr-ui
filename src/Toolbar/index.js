@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import Tool from "./tool";
 import { getRotatedDimensions, getOccupyingCells } from "./utils";
 import InspectTile from "../InspectTile";
+import Category from "./category";
 
 import axios from "axios";
 
@@ -14,8 +14,22 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
     useEffect(() => {
         const getTools = async () => {
             try {
-                const tools = await axios.get("/tools");
-                setTools(tools?.data);
+                const tools = (await axios.get("/tools"))?.data;
+                const categorisedTools = { misc: {} };
+
+                Object.entries(tools).forEach(([key, tool]) => {
+                    const category = tool.interaction
+                        ? "interactive"
+                        : tool.category || "misc";
+
+                    if (!categorisedTools[category]) {
+                        // if this is a new category
+                        categorisedTools[category] = {};
+                    }
+
+                    categorisedTools[category][key] = tool;
+                });
+                setTools(categorisedTools);
             } catch (e) {
                 console.log(e);
                 alert("Could not fetch tools from server!");
@@ -26,7 +40,10 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
     }, []);
     rotationRef.current = rotation;
 
-    console.log(currentTool);
+    const interactiveCategory = tools?.interactive;
+    delete tools?.interactive;
+    const miscCategory = tools?.misc;
+    delete tools?.misc;
 
     return (
         <>
@@ -49,19 +66,38 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                     >
                         Rotate
                     </button>
-                    {Object.keys(tools).map((toolName) => {
-                        const tool = tools[toolName];
-                        return (
-                            <Tool
-                                key={toolName}
-                                toolName={toolName}
-                                tool={tool}
-                                setCurrentTool={setCurrentTool}
-                                disabled={currentTool.name === toolName}
-                                rotationRef={rotationRef}
-                            />
-                        );
-                    })}
+                    {interactiveCategory && (
+                        <Category
+                            category={interactiveCategory}
+                            name={"Interactive"}
+                            setCurrentTool={setCurrentTool}
+                            rotationRef={rotationRef}
+                            currentTool={currentTool}
+                        />
+                    )}
+                    {Object.entries(tools).map(
+                        ([categoryName, categoryTools]) => {
+                            return (
+                                <Category
+                                    key={categoryName}
+                                    category={categoryTools}
+                                    name={categoryName}
+                                    setCurrentTool={setCurrentTool}
+                                    rotationRef={rotationRef}
+                                    currentTool={currentTool}
+                                />
+                            );
+                        }
+                    )}
+                    {miscCategory && (
+                        <Category
+                            category={miscCategory}
+                            name={"Misc"}
+                            setCurrentTool={setCurrentTool}
+                            rotationRef={rotationRef}
+                            currentTool={currentTool}
+                        />
+                    )}
                     <button
                         onClick={() => {
                             setCurrentTool({

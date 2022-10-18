@@ -2,7 +2,7 @@ import { ERROR_MESSAGES } from "../consts";
 import { placeBlock } from "./utils";
 const Tool = ({ toolName, setCurrentTool, tool, rotationRef, disabled }) => {
     return (
-        <div style={{ border: "2px black solid" }}>
+        <div>
             <button
                 key={toolName}
                 onClick={() => {

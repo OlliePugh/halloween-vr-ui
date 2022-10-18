@@ -35,6 +35,7 @@ const MapCreator = ({ width, height, currentTool }) => {
             <button
                 onClick={async () => {
                     try {
+                        console.log(JSON.stringify(tiles));
                         await axios.post("/submit", tiles);
                         navigate("/in-game", {
                             // TODO make this happen only when you are at the front of the queue
