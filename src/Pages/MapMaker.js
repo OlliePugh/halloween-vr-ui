@@ -2,7 +2,14 @@ import { useState } from "react";
 import MapCreator from "../MapCreator";
 import Toolbar from "../Toolbar";
 
-const MapMaker = () => {
+const MapMaker = ({
+    nextModule,
+    backModule,
+    tiles,
+    setTiles,
+    width,
+    height
+}) => {
     const [currentTool, setCurrentTool] = useState({
         trigger: (tiles) => tiles
     });
@@ -35,9 +42,13 @@ const MapMaker = () => {
                     }}
                 >
                     <MapCreator
-                        width={25}
-                        height={25}
+                        width={width}
+                        height={height}
                         currentTool={currentTool}
+                        nextModule={nextModule}
+                        backModule={backModule}
+                        setTiles={setTiles}
+                        tiles={tiles}
                     />
                 </div>
             </div>

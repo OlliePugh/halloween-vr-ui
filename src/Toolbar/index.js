@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { getRotatedDimensions, getOccupyingCells } from "./utils";
 import InspectTile from "../InspectTile";
 import Category from "./category";
@@ -9,27 +9,31 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
     const [rotation, setRotation] = useState(0);
     const [tools, setTools] = useState();
 
-    const rotationRef = useRef();
+    const categorisedTools = useMemo(() => {
+        if (tools) {
+            const categorisedTools = { misc: {} };
+            Object.entries(tools).forEach(([key, tool]) => {
+                const category = tool.interaction
+                    ? "interactive"
+                    : tool.category || "misc";
+
+                if (!categorisedTools[category]) {
+                    // if this is a new category
+                    categorisedTools[category] = {};
+                }
+
+                categorisedTools[category][key] = tool;
+            });
+
+            return categorisedTools;
+        }
+    }, [tools]);
 
     useEffect(() => {
         const getTools = async () => {
             try {
                 const tools = (await axios.get("/tools"))?.data;
-                const categorisedTools = { misc: {} };
-
-                Object.entries(tools).forEach(([key, tool]) => {
-                    const category = tool.interaction
-                        ? "interactive"
-                        : tool.category || "misc";
-
-                    if (!categorisedTools[category]) {
-                        // if this is a new category
-                        categorisedTools[category] = {};
-                    }
-
-                    categorisedTools[category][key] = tool;
-                });
-                setTools(categorisedTools);
+                setTools(tools);
             } catch (e) {
                 console.log(e);
                 alert("Could not fetch tools from server!");
@@ -38,12 +42,17 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
 
         getTools();
     }, []);
-    rotationRef.current = rotation;
 
-    const interactiveCategory = tools?.interactive;
-    delete tools?.interactive;
-    const miscCategory = tools?.misc;
-    delete tools?.misc;
+    const rotationRef = useRef();
+
+    const copyTools = { ...categorisedTools };
+
+    const interactiveCategory = copyTools?.interactive;
+    delete copyTools?.interactive;
+    const miscCategory = copyTools?.misc;
+    delete copyTools?.misc;
+
+    rotationRef.current = rotation;
 
     return (
         <>
@@ -75,7 +84,7 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                             currentTool={currentTool}
                         />
                     )}
-                    {Object.entries(tools).map(
+                    {Object.entries(copyTools).map(
                         ([categoryName, categoryTools]) => {
                             return (
                                 <Category
@@ -114,6 +123,7 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                         return newTiles;
                                     }
                                     // loop through and delete each child
+
                                     const { width, height } =
                                         tools[tileToDelete.type.key].dimensions;
 

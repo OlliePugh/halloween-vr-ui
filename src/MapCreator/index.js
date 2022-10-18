@@ -1,17 +1,12 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import MapTile from "../MapTile";
 import { ERRORS } from "../consts";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 const CELL_WIDTH = 100;
 
-const MapCreator = ({ width, height, currentTool }) => {
-    const [tiles, setTiles] = useState(
-        [...Array(width)].map((_) => Array(height).fill(null))
-    );
-    const navigate = useNavigate();
-
+const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
     const modifyCallback = useCallback(
         (row, col, isDrag) => {
             let newTiles = tiles;
@@ -27,29 +22,25 @@ const MapCreator = ({ width, height, currentTool }) => {
 
             setTiles(newTiles);
         },
-        [currentTool, tiles]
+        [currentTool, tiles, setTiles]
     );
 
     return (
         <>
-            <button
+            <Button
+                variant="contained"
                 onClick={async () => {
                     try {
                         console.log(JSON.stringify(tiles));
                         await axios.post("/submit", tiles);
-                        navigate("/in-game", {
-                            // TODO make this happen only when you are at the front of the queue
-                            state: {
-                                map: tiles
-                            }
-                        });
+                        nextModule(); // TODO do some checking to make sure everything seems valid
                     } catch (e) {
                         alert(`Something went wrong: ${e.message}`);
                     }
                 }}
             >
                 Submit
-            </button>
+            </Button>
             <div style={{ display: "inline-grid", width: width * CELL_WIDTH }}>
                 {tiles.map((col, colNum) => {
                     return col.map((tile, rowNum) => {
