@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { getRotatedDimensions, getOccupyingCells } from "./utils";
 import InspectTile from "../InspectTile";
 import Category from "./category";
+import { Button, Divider } from "@mui/material";
 
 import axios from "axios";
 
@@ -56,7 +57,7 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
 
     return (
         <>
-            <div style={{ height: "200px", borderBottom: "1px solid black" }}>
+            <div style={{ height: "200px" }}>
                 <h2>{currentTool?.name}</h2>
                 {currentTool?.dimensions && (
                     <InspectTile
@@ -66,15 +67,86 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                     />
                 )}
             </div>
+            <Divider> Tools </Divider>
             {tools && (
                 <>
-                    <button
-                        onClick={() => {
-                            setRotation(rotation + Math.PI / 2);
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-evenly",
+                            margin: "1rem 0"
                         }}
                     >
-                        Rotate
-                    </button>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setRotation(rotation + Math.PI / 2);
+                            }}
+                        >
+                            {" "}
+                            Rotate
+                        </Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setCurrentTool({
+                                    name: "delete",
+                                    trigger: (tiles, clickedPos) => {
+                                        const newTiles = [...tiles];
+                                        const tileToDelete =
+                                            newTiles[clickedPos.col][
+                                                clickedPos.row
+                                            ];
+
+                                        if (!tileToDelete?.type) {
+                                            // is there anything on that tile
+                                            return newTiles;
+                                        }
+                                        // loop through and delete each child
+
+                                        const { width, height } =
+                                            tools[tileToDelete.type.key]
+                                                .dimensions;
+
+                                        if (tileToDelete?.parent) {
+                                            // if it has a parent delete from the parents position
+                                            clickedPos = tileToDelete?.parent;
+                                        }
+
+                                        const { rotatedHeight, rotatedWidth } =
+                                            getRotatedDimensions(
+                                                tileToDelete.rotation,
+                                                {
+                                                    width,
+                                                    height
+                                                }
+                                            );
+
+                                        const occupyingCells =
+                                            getOccupyingCells(
+                                                {
+                                                    col: clickedPos.col,
+                                                    row: clickedPos.row
+                                                },
+                                                { rotatedHeight, rotatedWidth }
+                                            );
+
+                                        occupyingCells.forEach(([col, row]) => {
+                                            newTiles[col][row] = null;
+                                        });
+                                        return newTiles;
+                                    }
+                                });
+                            }}
+                            disabled={currentTool.name === "delete"}
+                        >
+                            Delete
+                        </Button>
+                    </div>
+                    <Divider style={{ marginBottom: "1rem" }}>
+                        {" "}
+                        Placeables{" "}
+                    </Divider>
                     {interactiveCategory && (
                         <Category
                             category={interactiveCategory}
@@ -107,59 +179,6 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                             currentTool={currentTool}
                         />
                     )}
-                    <button
-                        onClick={() => {
-                            setCurrentTool({
-                                name: "delete",
-                                trigger: (tiles, clickedPos) => {
-                                    const newTiles = [...tiles];
-                                    const tileToDelete =
-                                        newTiles[clickedPos.col][
-                                            clickedPos.row
-                                        ];
-
-                                    if (!tileToDelete?.type) {
-                                        // is there anything on that tile
-                                        return newTiles;
-                                    }
-                                    // loop through and delete each child
-
-                                    const { width, height } =
-                                        tools[tileToDelete.type.key].dimensions;
-
-                                    if (tileToDelete?.parent) {
-                                        // if it has a parent delete from the parents position
-                                        clickedPos = tileToDelete?.parent;
-                                    }
-
-                                    const { rotatedHeight, rotatedWidth } =
-                                        getRotatedDimensions(
-                                            tileToDelete.rotation,
-                                            {
-                                                width,
-                                                height
-                                            }
-                                        );
-
-                                    const occupyingCells = getOccupyingCells(
-                                        {
-                                            col: clickedPos.col,
-                                            row: clickedPos.row
-                                        },
-                                        { rotatedHeight, rotatedWidth }
-                                    );
-
-                                    occupyingCells.forEach(([col, row]) => {
-                                        newTiles[col][row] = null;
-                                    });
-                                    return newTiles;
-                                }
-                            });
-                        }}
-                        disabled={currentTool.name === "delete"}
-                    >
-                        Delete
-                    </button>
                 </>
             )}
         </>

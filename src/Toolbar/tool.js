@@ -1,9 +1,10 @@
 import { ERROR_MESSAGES } from "../consts";
 import { placeBlock } from "./utils";
+import { Button } from "@mui/material";
 const Tool = ({ toolName, setCurrentTool, tool, rotationRef, disabled }) => {
     return (
         <div>
-            <button
+            <Button
                 key={toolName}
                 onClick={() => {
                     setCurrentTool({
@@ -32,9 +33,11 @@ const Tool = ({ toolName, setCurrentTool, tool, rotationRef, disabled }) => {
                     });
                 }}
                 disabled={disabled}
+                variant="outlined"
+                fullWidth={true}
             >
                 {tool.name || toolName}
-            </button>
+            </Button>
         </div>
     );
 };
