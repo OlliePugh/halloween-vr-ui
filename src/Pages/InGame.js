@@ -10,7 +10,6 @@ const InGame = ({ socket, tiles }) => {
         });
     }, [socket]);
 
-    console.log("IN GAME MAP");
     return (
         <>
             <InGameMap mapData={tiles} socket={socket} />

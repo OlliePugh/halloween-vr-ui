@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import MapTile from "../MapTile";
+import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 
 const CELL_WIDTH = 100;
 
 const InGameMap = ({ mapData, socket }) => {
     const [interactiveTiles, setInteractiveTiles] = useState({});
+    const [selectedEvent, setSelectedEvent] = useState();
 
     /* eslint-disable */
     useEffect(() => {
@@ -27,6 +29,10 @@ const InGameMap = ({ mapData, socket }) => {
     /* eslint-enable */
 
     const clickCallback = (propKey) => {
+        if (selectedEvent) {
+            console.log(`CLICKED ${propKey} WITH EVENT ${selectedEvent.key}`);
+            return; // do not try and trigger a tile event
+        }
         const interactiveTileCopy = { ...interactiveTiles };
         const tile = interactiveTileCopy[propKey];
         if (!tile) {
@@ -50,11 +56,27 @@ const InGameMap = ({ mapData, socket }) => {
     };
 
     return (
-        <>
+        <div style={{ display: "flex", height: "100%" }}>
+            <div
+                style={{
+                    display: "inline-block",
+                    height: "100%",
+                    width: "200px",
+                    backgroundColor: "grey"
+                }}
+            >
+                <NonBlockEventsToolbar
+                    selectedEvent={selectedEvent}
+                    setSelectedEvent={setSelectedEvent}
+                />
+            </div>
             <div
                 style={{
                     display: "inline-grid",
-                    width: mapData.length * CELL_WIDTH
+                    width: mapData.length * CELL_WIDTH,
+                    margin: "50px",
+                    flex: 1,
+                    overflow: "scroll"
                 }}
             >
                 {mapData.map((col, colNum) => {
@@ -80,7 +102,7 @@ const InGameMap = ({ mapData, socket }) => {
                     });
                 })}
             </div>
-        </>
+        </div>
     );
 };
 
