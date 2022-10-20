@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import * as axios from "axios";
 import { Button } from "@mui/material";
 
-const NonBlockEventsToolbar = ({ selectedEvent, setSelectedEvent }) => {
+const NonBlockEventsToolbar = ({
+    selectedEvent,
+    setSelectedEvent,
+    dispatchNonBlockEvent
+}) => {
     const [events, setEvents] = useState();
     useEffect(() => {
         const getEvents = async () => {
@@ -19,9 +23,9 @@ const NonBlockEventsToolbar = ({ selectedEvent, setSelectedEvent }) => {
     }, []);
 
     const chooseEvent = (event) => {
-        console.log(event);
         if (!event.requiresAssociatedTile) {
-            console.log(`TRIGGERING ${event.name}`);
+            setSelectedEvent();
+            dispatchNonBlockEvent(event);
             return;
         }
 

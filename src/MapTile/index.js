@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const MapTile = ({
     data,
     row,
@@ -5,8 +7,10 @@ const MapTile = ({
     modifyCallback,
     cellWidth,
     colour = true,
-    style = {}
+    style = {},
+    hoverData = {}
 }) => {
+    const [isHoveringOver, setIsHoveringOver] = useState(false);
     const tileStyle = {
         textColour: "black",
         colour: "white",
@@ -23,6 +27,8 @@ const MapTile = ({
             onDragOver={() => {
                 modifyCallback(row, col, true);
             }}
+            onMouseEnter={() => setIsHoveringOver(true)}
+            onMouseLeave={() => setIsHoveringOver(false)}
             style={{
                 position: "relative",
                 width: `${cellWidth}px`,
@@ -30,7 +36,8 @@ const MapTile = ({
                 border: `1px solid black`,
                 gridArea: `${row + 1} / ${col + 1} / ${row + 2} / ${col + 2}`,
                 backgroundColor: colour && tileStyle.colour,
-                ...style
+                ...style,
+                ...(isHoveringOver && hoverData.style)
             }}
         >
             <div
@@ -53,7 +60,9 @@ const MapTile = ({
                         textDecoration: isParent ? "underline" : "none"
                     }}
                 >
-                    {data?.type.name}
+                    {isHoveringOver && hoverData.name
+                        ? hoverData.name
+                        : data?.type.name}
                 </p>
             </div>
         </div>

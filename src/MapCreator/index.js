@@ -31,7 +31,6 @@ const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
                 variant="contained"
                 onClick={async () => {
                     try {
-                        console.log(JSON.stringify(tiles));
                         await axios.post("/submit", tiles);
                         nextModule(); // TODO do some checking to make sure everything seems valid
                     } catch (e) {

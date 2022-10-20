@@ -50,6 +50,7 @@ const InGameMap = ({ mapData, socket }) => {
             location: propKey
         };
 
+        dispatchNonBlockEvent(selectedEvent, location); // dispatch the event to orch
         setRunningNonTileBlocks(copyRunningNonTileBlocks);
 
         const copyRenderMapData = [...renderMapData];
@@ -66,8 +67,6 @@ const InGameMap = ({ mapData, socket }) => {
 
         setTimeout(() => {
             // set it back to triggerable in the future
-            console.log("RUNNING EVENT CLEANUP");
-
             // remove from the running events
             const copyRunningNonTileBlocks = { ...runningNonTileBlocks };
             delete copyRunningNonTileBlocks[selectedEvent.key];
@@ -109,6 +108,12 @@ const InGameMap = ({ mapData, socket }) => {
         setInteractiveTiles(interactiveTileCopy);
     };
 
+    const dispatchNonBlockEvent = (event, location = null) => {
+        const finalEvent = { ...event, location };
+        console.log("dispatching", finalEvent);
+        socket.emit(SOCKET_EVENTS.NONBLOCK_EVENT, finalEvent);
+    };
+
     return (
         <div style={{ display: "flex", height: "100%" }}>
             <div
@@ -122,6 +127,7 @@ const InGameMap = ({ mapData, socket }) => {
                 <NonBlockEventsToolbar
                     selectedEvent={selectedEvent}
                     setSelectedEvent={setSelectedEvent}
+                    dispatchNonBlockEvent={dispatchNonBlockEvent}
                 />
             </div>
             <div
@@ -151,6 +157,14 @@ const InGameMap = ({ mapData, socket }) => {
                                 style={{
                                     cursor: interactiveTile ? "pointer" : "auto"
                                 }}
+                                hoverData={
+                                    selectedEvent && {
+                                        name:
+                                            selectedEvent?.name ||
+                                            selectedEvent?.key,
+                                        style: { backgroundColor: "red" }
+                                    }
+                                }
                             />
                         );
                     });
