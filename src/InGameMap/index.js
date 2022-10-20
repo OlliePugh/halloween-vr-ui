@@ -33,6 +33,17 @@ const InGameMap = ({ mapData, socket }) => {
     }, []);
 
     const addNonTileEvent = (propKey) => {
+        if (runningNonTileBlocks[selectedEvent.key]) {
+            alert("That event is on a cooldown...");
+            return;
+        }
+
+        const location = propKey.split(","); // add to the list of rendered tiles
+        if (renderMapData[location[0]][location[1]]) {
+            alert("That position is occupied!");
+            return;
+        }
+
         const copyRunningNonTileBlocks = { ...runningNonTileBlocks }; // add to the list of currently running events
         copyRunningNonTileBlocks[selectedEvent.key] = {
             ...selectedEvent,
@@ -41,7 +52,6 @@ const InGameMap = ({ mapData, socket }) => {
 
         setRunningNonTileBlocks(copyRunningNonTileBlocks);
 
-        const location = propKey.split(","); // add to the list of rendered tiles
         const copyRenderMapData = [...renderMapData];
         copyRenderMapData[location[0]][location[1]] = {
             parent: { col: location[0], row: location[1] },
