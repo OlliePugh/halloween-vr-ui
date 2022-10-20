@@ -6,16 +6,21 @@ import SOCKET_EVENTS from "../SOCKET_EVENTS";
 const CELL_WIDTH = 100;
 
 const InGameMap = ({ mapData, socket }) => {
-    const [interactiveTiles, setInteractiveTiles] = useState({});
     const [selectedEvent, setSelectedEvent] = useState();
+
+    const [interactiveTiles, setInteractiveTiles] = useState({});
+    const [runningNonTileBlocks, setRunningNonTileBlocks] = useState({});
+
+    const [renderMapData, setRenderedMapData] = useState(
+        JSON.parse(JSON.stringify(mapData))
+    );
 
     /* eslint-disable */
     useEffect(() => {
         const copyInteractiveTiles = { ...interactiveTiles };
-        mapData.forEach((col, colNum) => {
+        renderMapData.forEach((col, colNum) => {
             col.forEach((tile, rowNum) => {
                 if (tile?.type.interaction) {
-                    console.log(tile);
                     copyInteractiveTiles[`${colNum},${rowNum}`] = {
                         ...tile.type.interaction,
                         lastCalled: 0,
@@ -26,11 +31,51 @@ const InGameMap = ({ mapData, socket }) => {
         });
         setInteractiveTiles(copyInteractiveTiles);
     }, []);
-    /* eslint-enable */
 
+    const addNonTileEvent = (propKey) => {
+        const copyRunningNonTileBlocks = { ...runningNonTileBlocks }; // add to the list of currently running events
+        copyRunningNonTileBlocks[selectedEvent.key] = {
+            ...selectedEvent,
+            location: propKey
+        };
+
+        setRunningNonTileBlocks(copyRunningNonTileBlocks);
+
+        const location = propKey.split(","); // add to the list of rendered tiles
+        const copyRenderMapData = [...renderMapData];
+        copyRenderMapData[location[0]][location[1]] = {
+            parent: { col: location[0], row: location[1] },
+            type: {
+                name: selectedEvent.name || key,
+                dimensions: { width: 1, height: 1 }
+            },
+            rotation: 0
+        };
+
+        setRenderedMapData(copyRenderMapData);
+
+        setTimeout(() => {
+            // set it back to triggerable in the future
+            console.log("RUNNING EVENT CLEANUP");
+
+            // remove from the running events
+            const copyRunningNonTileBlocks = { ...runningNonTileBlocks };
+            delete copyRunningNonTileBlocks[selectedEvent.key];
+            setRunningNonTileBlocks(copyRunningNonTileBlocks);
+
+            // remove from the final render map
+            const copyRenderMapData = [...renderMapData];
+            copyRenderMapData[location[0]][location[1]] = JSON.parse(
+                JSON.stringify(mapData[location[0]][location[1]])
+            ); // set back to a copy of whatever it was before
+            setRenderedMapData(copyRenderMapData);
+        }, selectedEvent.duration * 1000);
+    };
+
+    /* eslint-enable */
     const clickCallback = (propKey) => {
         if (selectedEvent) {
-            console.log(`CLICKED ${propKey} WITH EVENT ${selectedEvent.key}`);
+            addNonTileEvent(propKey);
             return; // do not try and trigger a tile event
         }
         const interactiveTileCopy = { ...interactiveTiles };
@@ -42,7 +87,6 @@ const InGameMap = ({ mapData, socket }) => {
         if (tile.triggerable) {
             tile.triggerable = false;
             tile.lastCalled = Date.now();
-            console.log("emitting");
             socket.emit(SOCKET_EVENTS.TRIGGER_EVENT, propKey);
             setTimeout(() => {
                 // set it back to triggerable in the future
@@ -73,13 +117,13 @@ const InGameMap = ({ mapData, socket }) => {
             <div
                 style={{
                     display: "inline-grid",
-                    width: mapData.length * CELL_WIDTH,
+                    width: renderMapData.length * CELL_WIDTH,
                     margin: "50px",
                     flex: 1,
                     overflow: "scroll"
                 }}
             >
-                {mapData.map((col, colNum) => {
+                {renderMapData.map((col, colNum) => {
                     return col.map((tile, rowNum) => {
                         const interactiveTile =
                             interactiveTiles[`${colNum},${rowNum}`];

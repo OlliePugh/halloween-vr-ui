@@ -32,7 +32,7 @@ const NonBlockEventsToolbar = ({ selectedEvent, setSelectedEvent }) => {
         <>
             {events &&
                 Object.entries(events).map(([key, event]) => {
-                    const isSelectedEvent = selectedEvent?.key == key;
+                    const isSelectedEvent = selectedEvent?.key === key;
                     event = { ...event, key };
                     return (
                         <Button
