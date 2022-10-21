@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
@@ -14,6 +14,8 @@ const InGameMap = ({ mapData, socket }) => {
     const [renderMapData, setRenderedMapData] = useState(
         JSON.parse(JSON.stringify(mapData))
     );
+
+    const runningNonTileBlocksRef = useRef(runningNonTileBlocks);
 
     /* eslint-disable */
     useEffect(() => {
@@ -32,7 +34,13 @@ const InGameMap = ({ mapData, socket }) => {
         setInteractiveTiles(copyInteractiveTiles);
     }, []);
 
-    const addNonTileEvent = (propKey) => {
+    useEffect(() => {
+        // TODO THIS IS JUST AWFUL - FIX THIS
+        runningNonTileBlocksRef.current = runningNonTileBlocks;
+    }, [runningNonTileBlocks]);
+
+    // add a an adhoc event that is tied to a tile position
+    const addNonTilePositionalEvent = (propKey) => {
         if (runningNonTileBlocks[selectedEvent.key]) {
             alert("That event is on a cooldown...");
             return;
@@ -44,14 +52,8 @@ const InGameMap = ({ mapData, socket }) => {
             return;
         }
 
-        const copyRunningNonTileBlocks = { ...runningNonTileBlocks }; // add to the list of currently running events
-        copyRunningNonTileBlocks[selectedEvent.key] = {
-            ...selectedEvent,
-            location: propKey
-        };
-
+        storeRunningNonTileBlock(selectedEvent, propKey);
         dispatchNonBlockEvent(selectedEvent, location); // dispatch the event to orch
-        setRunningNonTileBlocks(copyRunningNonTileBlocks);
 
         const copyRenderMapData = [...renderMapData];
         copyRenderMapData[location[0]][location[1]] = {
@@ -66,12 +68,7 @@ const InGameMap = ({ mapData, socket }) => {
         setRenderedMapData(copyRenderMapData);
 
         setTimeout(() => {
-            // set it back to triggerable in the future
-            // remove from the running events
-            const copyRunningNonTileBlocks = { ...runningNonTileBlocks };
-            delete copyRunningNonTileBlocks[selectedEvent.key];
-            setRunningNonTileBlocks(copyRunningNonTileBlocks);
-
+            // TODO you might find that there is some funniness going on if there are multiple tile associted blocks and may need to use refs for the timeout
             // remove from the final render map
             const copyRenderMapData = [...renderMapData];
             copyRenderMapData[location[0]][location[1]] = JSON.parse(
@@ -84,7 +81,7 @@ const InGameMap = ({ mapData, socket }) => {
     /* eslint-enable */
     const clickCallback = (propKey) => {
         if (selectedEvent) {
-            addNonTileEvent(propKey);
+            addNonTilePositionalEvent(propKey);
             return; // do not try and trigger a tile event
         }
         const interactiveTileCopy = { ...interactiveTiles };
@@ -108,10 +105,34 @@ const InGameMap = ({ mapData, socket }) => {
         setInteractiveTiles(interactiveTileCopy);
     };
 
+    const removeRunningNonTileBlock = (key) => {
+        const copyRunningNonTileBlocks = { ...runningNonTileBlocksRef.current };
+        delete copyRunningNonTileBlocks[key];
+        setRunningNonTileBlocks(copyRunningNonTileBlocks);
+    };
+
+    const storeRunningNonTileBlock = (event, location = null) => {
+        const copyRunningNonTileBlocks = { ...runningNonTileBlocks }; // add to the list of currently running events
+        copyRunningNonTileBlocks[event.key] = {
+            ...event,
+            location
+        };
+        setRunningNonTileBlocks(copyRunningNonTileBlocks);
+        setTimeout(() => {
+            // set it back to triggerable in the future
+            removeRunningNonTileBlock(event.key);
+        }, event.frequency * 1000);
+    };
+
+    // dispatch an event to the server
     const dispatchNonBlockEvent = (event, location = null) => {
+        if (!location) {
+            storeRunningNonTileBlock(event);
+        }
         const finalEvent = { ...event, location };
         console.log("dispatching", finalEvent);
         socket.emit(SOCKET_EVENTS.NONBLOCK_EVENT, finalEvent);
+        setSelectedEvent();
     };
 
     return (
@@ -128,6 +149,7 @@ const InGameMap = ({ mapData, socket }) => {
                     selectedEvent={selectedEvent}
                     setSelectedEvent={setSelectedEvent}
                     dispatchNonBlockEvent={dispatchNonBlockEvent}
+                    runningNonTileBlocks={runningNonTileBlocks}
                 />
             </div>
             <div

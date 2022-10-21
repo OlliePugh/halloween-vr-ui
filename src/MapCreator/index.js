@@ -63,6 +63,7 @@ const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
                 <input type="file" hidden />
             </Button>
             <Button
+                style={{ float: "right" }}
                 variant="contained"
                 onClick={async () => {
                     try {

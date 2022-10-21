@@ -5,7 +5,8 @@ import { Button } from "@mui/material";
 const NonBlockEventsToolbar = ({
     selectedEvent,
     setSelectedEvent,
-    dispatchNonBlockEvent
+    dispatchNonBlockEvent,
+    runningNonTileBlocks
 }) => {
     const [events, setEvents] = useState();
     useEffect(() => {
@@ -42,6 +43,7 @@ const NonBlockEventsToolbar = ({
                         <Button
                             key={key}
                             variant={isSelectedEvent ? "outlined" : "contained"}
+                            disabled={!!runningNonTileBlocks?.[key]}
                             fullWidth={true}
                             onClick={() => {
                                 isSelectedEvent
