@@ -78,7 +78,7 @@ const InGameMap = ({ mapData, socket }) => {
                 JSON.stringify(mapData[location[0]][location[1]])
             ); // set back to a copy of whatever it was before
             setRenderedMapData(copyRenderMapData);
-        }, selectedEvent.duration * 1000);
+        }, selectedEvent.frequency * 1000);
     };
 
     /* eslint-enable */
