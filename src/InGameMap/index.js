@@ -2,9 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
-
-const CELL_WIDTH = 100;
-
+import { CELL_WIDTH } from "../consts";
 const InGameMap = ({ mapData, socket }) => {
     const [selectedEvent, setSelectedEvent] = useState();
 
@@ -180,7 +178,8 @@ const InGameMap = ({ mapData, socket }) => {
                                     cursor: interactiveTile ? "pointer" : "auto"
                                 }}
                                 hoverData={
-                                    selectedEvent && {
+                                    selectedEvent &&
+                                    !tile && {
                                         name:
                                             selectedEvent?.name ||
                                             selectedEvent?.key,

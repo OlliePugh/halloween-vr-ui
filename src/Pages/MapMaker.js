@@ -8,7 +8,8 @@ const MapMaker = ({
     tiles,
     setTiles,
     width,
-    height
+    height,
+    tools
 }) => {
     const [currentTool, setCurrentTool] = useState({
         trigger: (tiles) => tiles
@@ -27,6 +28,7 @@ const MapMaker = ({
                 <Toolbar
                     setCurrentTool={setCurrentTool}
                     currentTool={currentTool}
+                    tools={tools}
                 />
             </div>
             <div

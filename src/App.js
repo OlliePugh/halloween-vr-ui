@@ -13,6 +13,7 @@ import {
     MAP_HEIGHT as height
 } from "./consts";
 import ProgressIndicator from "./ProgressIndicator";
+import PlaceCompulsory from "./Pages/PlaceCompulsory";
 
 axios.defaults.baseURL = "http://dev.olliepugh.com:8080/";
 axios.defaults.withCredentials = true;
@@ -27,6 +28,8 @@ function App() {
     const [tiles, setTiles] = useState(
         [...Array(width)].map((_) => Array(height).fill(null))
     );
+    const [tools, setTools] = useState();
+    const [compulsoryTools, setCompulsoryTools] = useState();
 
     const nextModule = () => {
         const newModule = currentModule + 1;
@@ -36,6 +39,25 @@ function App() {
     const backModule = () => {
         const newModule = currentModule - 1;
         setCurrentModule(newModule);
+    };
+
+    const fetchTools = async () => {
+        try {
+            const tools = (await axios.get("/tools"))?.data;
+            const newCompulsoryTools = { ...tools };
+            Object.entries(newCompulsoryTools).forEach(([key, tool]) => {
+                if (tool?.category === "compulsory") {
+                    delete tools[key];
+                } else {
+                    delete newCompulsoryTools[key];
+                }
+            });
+            setTools(tools);
+            setCompulsoryTools(newCompulsoryTools);
+        } catch (e) {
+            console.log(e);
+            alert("Could not fetch tools from server!");
+        }
     };
 
     useEffect(() => {
@@ -49,8 +71,7 @@ function App() {
             socket.on("disconnect", () => {
                 alert("Lost connection to server!");
             });
-
-            socket.emit(SOCKET_EVENTS.HANDSHAKE);
+            await fetchTools();
         })();
     }, []);
 
@@ -72,9 +93,19 @@ function App() {
                     tiles={tiles}
                     setTiles={setTiles}
                     width={width}
+                    tools={tools}
+                    setTools={setTools}
                 />
             ) : CHAIN[currentModule] === MODULES.IN_GAME ? (
                 <InGame socket={socket} tiles={tiles} />
+            ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
+                <PlaceCompulsory
+                    tiles={tiles}
+                    compulsoryTools={compulsoryTools}
+                    nextModule={nextModule}
+                    backModule={backModule}
+                    setTiles={setTiles}
+                />
             ) : (
                 <></>
             )}

@@ -3,8 +3,7 @@ import MapTile from "../MapTile";
 import { ERRORS } from "../consts";
 import axios from "axios";
 import { Button } from "@mui/material";
-
-const CELL_WIDTH = 100;
+import { CELL_WIDTH } from "../consts";
 
 const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
     const modifyCallback = useCallback(
@@ -74,7 +73,7 @@ const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
                     }
                 }}
             >
-                Submit
+                Next
             </Button>
             <div style={{ display: "inline-grid", width: width * CELL_WIDTH }}>
                 {tiles.map((col, colNum) => {

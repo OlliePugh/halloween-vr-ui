@@ -1,14 +1,11 @@
-import { useEffect, useRef, useState, useMemo } from "react";
-import { getRotatedDimensions, getOccupyingCells } from "./utils";
+import { useRef, useState, useMemo } from "react";
+import { deleteTiles } from "./utils";
 import InspectTile from "../InspectTile";
 import Category from "./category";
 import { Button, Divider } from "@mui/material";
 
-import axios from "axios";
-
-const Toolbar = ({ setCurrentTool, currentTool }) => {
+const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
     const [rotation, setRotation] = useState(0);
-    const [tools, setTools] = useState();
 
     const categorisedTools = useMemo(() => {
         if (tools) {
@@ -30,24 +27,11 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
         }
     }, [tools]);
 
-    useEffect(() => {
-        const getTools = async () => {
-            try {
-                const tools = (await axios.get("/tools"))?.data;
-                setTools(tools);
-            } catch (e) {
-                console.log(e);
-                alert("Could not fetch tools from server!");
-            }
-        };
-
-        getTools();
-    }, []);
-
     const rotationRef = useRef();
 
     const copyTools = { ...categorisedTools };
 
+    // want these to be at certain positions in the list therefore take out of the general list of tools
     const interactiveCategory = copyTools?.interactive;
     delete copyTools?.interactive;
     const miscCategory = copyTools?.misc;
@@ -92,49 +76,11 @@ const Toolbar = ({ setCurrentTool, currentTool }) => {
                                 setCurrentTool({
                                     name: "delete",
                                     trigger: (tiles, clickedPos) => {
-                                        const newTiles = [...tiles];
-                                        const tileToDelete =
-                                            newTiles[clickedPos.col][
-                                                clickedPos.row
-                                            ];
-
-                                        if (!tileToDelete?.type) {
-                                            // is there anything on that tile
-                                            return newTiles;
-                                        }
-                                        // loop through and delete each child
-
-                                        const { width, height } =
-                                            tools[tileToDelete.type.key]
-                                                .dimensions;
-
-                                        if (tileToDelete?.parent) {
-                                            // if it has a parent delete from the parents position
-                                            clickedPos = tileToDelete?.parent;
-                                        }
-
-                                        const { rotatedHeight, rotatedWidth } =
-                                            getRotatedDimensions(
-                                                tileToDelete.rotation,
-                                                {
-                                                    width,
-                                                    height
-                                                }
-                                            );
-
-                                        const occupyingCells =
-                                            getOccupyingCells(
-                                                {
-                                                    col: clickedPos.col,
-                                                    row: clickedPos.row
-                                                },
-                                                { rotatedHeight, rotatedWidth }
-                                            );
-
-                                        occupyingCells.forEach(([col, row]) => {
-                                            newTiles[col][row] = null;
-                                        });
-                                        return newTiles;
+                                        return deleteTiles(
+                                            tools,
+                                            tiles,
+                                            clickedPos
+                                        );
                                     }
                                 });
                             }}

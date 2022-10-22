@@ -9,7 +9,7 @@ const ProgressIndicator = ({ currentModule }) => {
     return (
         <Box sx={{ width: "30%", margin: "0 auto" }}>
             <Stepper activeStep={currentModule}>
-                {CHAIN.map((module, index) => {
+                {CHAIN.map((module, _) => {
                     return (
                         <Step key={module.name}>
                             <StepLabel>{module.description}</StepLabel>

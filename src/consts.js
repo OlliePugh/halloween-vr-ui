@@ -16,7 +16,7 @@ export const MODULES = {
     },
     PLACE_REQUIRED: {
         name: "place_required",
-        description: "Place down compulsory blocks"
+        description: "Place the important stuff"
     },
     IN_GAME: {
         name: "in_game",
@@ -26,9 +26,10 @@ export const MODULES = {
 
 export const CHAIN = [
     MODULES.MAP_MAKER,
-    // MODULES.PLACE_REQUIRED,
+    MODULES.PLACE_REQUIRED,
     MODULES.IN_GAME
 ];
 
 export const MAP_WIDTH = 25;
 export const MAP_HEIGHT = 25;
+export const CELL_WIDTH = 100;

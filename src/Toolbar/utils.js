@@ -7,7 +7,7 @@ export const placeBlock = (
     rotationRef,
     type
 ) => {
-    const rotation = rotationRef.current;
+    const rotation = rotationRef?.current || 0;
     const { rotatedWidth, rotatedHeight } = getRotatedDimensions(rotation, {
         width,
         height
@@ -64,6 +64,45 @@ const getAmountOfTile = (tiles, type) => {
     });
 
     return counter;
+};
+
+export const deleteTiles = (tools, tiles, clickedPos) => {
+    const newTiles = [...tiles];
+    const tileToDelete = newTiles[clickedPos.col][clickedPos.row];
+
+    if (!tileToDelete?.type) {
+        // is there anything on that tile
+        return newTiles;
+    }
+    // loop through and delete each child
+
+    const { width, height } = tools[tileToDelete.type.key].dimensions;
+
+    if (tileToDelete?.parent) {
+        // if it has a parent delete from the parents position
+        clickedPos = tileToDelete?.parent;
+    }
+
+    const { rotatedHeight, rotatedWidth } = getRotatedDimensions(
+        tileToDelete.rotation,
+        {
+            width,
+            height
+        }
+    );
+
+    const occupyingCells = getOccupyingCells(
+        {
+            col: clickedPos.col,
+            row: clickedPos.row
+        },
+        { rotatedHeight, rotatedWidth }
+    );
+
+    occupyingCells.forEach(([col, row]) => {
+        newTiles[col][row] = null;
+    });
+    return newTiles;
 };
 
 export const getRotatedDimensions = (rotation, { width, height }) => {
