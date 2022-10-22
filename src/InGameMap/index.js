@@ -3,7 +3,7 @@ import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { CELL_WIDTH } from "../consts";
-const InGameMap = ({ mapData, socket }) => {
+const InGameMap = ({ mapData, socketRef }) => {
     const [selectedEvent, setSelectedEvent] = useState();
 
     const [interactiveTiles, setInteractiveTiles] = useState({});
@@ -91,7 +91,7 @@ const InGameMap = ({ mapData, socket }) => {
         if (tile.triggerable) {
             tile.triggerable = false;
             tile.lastCalled = Date.now();
-            socket.emit(SOCKET_EVENTS.TRIGGER_EVENT, propKey);
+            socketRef.current.emit(SOCKET_EVENTS.TRIGGER_EVENT, propKey);
             setTimeout(() => {
                 // set it back to triggerable in the future
                 const newCopy = { ...interactiveTiles };
@@ -129,7 +129,7 @@ const InGameMap = ({ mapData, socket }) => {
         }
         const finalEvent = { ...event, location };
         console.log("dispatching", finalEvent);
-        socket.emit(SOCKET_EVENTS.NONBLOCK_EVENT, finalEvent);
+        socketRef.current.emit(SOCKET_EVENTS.NONBLOCK_EVENT, finalEvent);
         setSelectedEvent();
     };
 

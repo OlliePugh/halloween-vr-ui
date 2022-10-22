@@ -4,7 +4,9 @@ const SOCKET_EVENTS = {
     TRIGGER_EVENT: "trigger_event",
     NONBLOCK_EVENT: "non_block_event",
     MISSING_CLIENT_ID: "missing_client_id",
-    MULTIPLE_SOCKETS: "multiple_sockets"
+    MULTIPLE_SOCKETS: "multiple_sockets",
+    QUEUE_POSITION_UPDATE: "queue_position_update",
+    GAME_STARTING: "game_starting"
 };
 
 export default SOCKET_EVENTS;

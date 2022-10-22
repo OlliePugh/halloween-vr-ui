@@ -18,6 +18,10 @@ export const MODULES = {
         name: "place_required",
         description: "Place the important stuff"
     },
+    IN_QUEUE: {
+        name: "in_queue",
+        description: "Wait for your turn"
+    },
     IN_GAME: {
         name: "in_game",
         description: "Play!"
@@ -27,6 +31,7 @@ export const MODULES = {
 export const CHAIN = [
     MODULES.MAP_MAKER,
     MODULES.PLACE_REQUIRED,
+    MODULES.IN_QUEUE,
     MODULES.IN_GAME
 ];
 

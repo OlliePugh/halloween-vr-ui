@@ -4,13 +4,16 @@ import { Button, Divider } from "@mui/material";
 import { useState, useMemo, useCallback } from "react";
 import CompulsoryProgress from "../CompulsoryProgress";
 import { placeBlock, deleteTiles } from "../Toolbar/utils";
+import axios from "axios";
+import SOCKET_EVENTS from "../SOCKET_EVENTS";
 
 const PlaceCompulsory = ({
     compulsoryTools,
     tiles,
     nextModule,
     backModule,
-    setTiles
+    setTiles,
+    socket
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [blockPlacements, setBlockPlacements] = useState([]);

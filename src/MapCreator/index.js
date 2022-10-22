@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import MapTile from "../MapTile";
 import { ERRORS } from "../consts";
-import axios from "axios";
 import { Button } from "@mui/material";
 import { CELL_WIDTH } from "../consts";
 
@@ -64,14 +63,7 @@ const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
             <Button
                 style={{ float: "right" }}
                 variant="contained"
-                onClick={async () => {
-                    try {
-                        await axios.post("/submit", tiles);
-                        nextModule(); // TODO do some checking to make sure everything seems valid
-                    } catch (e) {
-                        alert(`Something went wrong: ${e.message}`);
-                    }
-                }}
+                onClick={nextModule}
             >
                 Next
             </Button>

@@ -2,8 +2,7 @@ import "./App.css";
 import axios from "axios";
 import MapMaker from "./Pages/MapMaker";
 import InGame from "./Pages/InGame";
-import io from "socket.io-client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import SOCKET_EVENTS from "./SOCKET_EVENTS";
 import DuplicateTab from "./DuplicateTab";
 import {
@@ -14,13 +13,10 @@ import {
 } from "./consts";
 import ProgressIndicator from "./ProgressIndicator";
 import PlaceCompulsory from "./Pages/PlaceCompulsory";
+import InQueue from "./Pages/InQueue";
 
 axios.defaults.baseURL = "http://dev.olliepugh.com:8080/";
 axios.defaults.withCredentials = true;
-
-const socket = io("http://dev.olliepugh.com:8080", {
-    withCredentials: true
-});
 
 function App() {
     const [isDuplicatePage, setIsDuplicatePage] = useState(false);
@@ -30,6 +26,8 @@ function App() {
     );
     const [tools, setTools] = useState();
     const [compulsoryTools, setCompulsoryTools] = useState();
+
+    const socketRef = useRef();
 
     const nextModule = () => {
         const newModule = currentModule + 1;
@@ -63,14 +61,6 @@ function App() {
     useEffect(() => {
         (async () => {
             await axios.get("/start-session");
-
-            socket.on(SOCKET_EVENTS.MULTIPLE_SOCKETS, () => {
-                setIsDuplicatePage(true);
-            });
-
-            socket.on("disconnect", () => {
-                alert("Lost connection to server!");
-            });
             await fetchTools();
         })();
     }, []);
@@ -81,7 +71,7 @@ function App() {
                 <DuplicateTab
                     setAsMain={() => {
                         setIsDuplicatePage(false);
-                        socket.emit(SOCKET_EVENTS.SET_PRIMARY);
+                        socketRef.current.emit(SOCKET_EVENTS.SET_PRIMARY);
                     }}
                 />
             )}
@@ -97,7 +87,13 @@ function App() {
                     setTools={setTools}
                 />
             ) : CHAIN[currentModule] === MODULES.IN_GAME ? (
-                <InGame socket={socket} tiles={tiles} />
+                <InGame socketRef={socketRef} tiles={tiles} />
+            ) : CHAIN[currentModule] === MODULES.IN_QUEUE ? (
+                <InQueue
+                    socketRef={socketRef}
+                    nextModule={nextModule}
+                    setIsDuplicatePage
+                />
             ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
                 <PlaceCompulsory
                     tiles={tiles}
@@ -105,6 +101,7 @@ function App() {
                     nextModule={nextModule}
                     backModule={backModule}
                     setTiles={setTiles}
+                    socketRef={socketRef}
                 />
             ) : (
                 <></>

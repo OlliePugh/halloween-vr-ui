@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import * as axios from "axios";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 const NonBlockEventsToolbar = ({
     selectedEvent,
@@ -35,7 +35,7 @@ const NonBlockEventsToolbar = ({
 
     return (
         <>
-            {events &&
+            {events ? (
                 Object.entries(events).map(([key, event]) => {
                     const isSelectedEvent = selectedEvent?.key === key;
                     event = { ...event, key };
@@ -54,7 +54,12 @@ const NonBlockEventsToolbar = ({
                             {event.name || key}
                         </Button>
                     );
-                })}
+                })
+            ) : (
+                <div style={{ textAlign: "center" }}>
+                    <CircularProgress />
+                </div>
+            )}
         </>
     );
 };

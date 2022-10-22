@@ -1,18 +1,31 @@
 import InGameMap from "../InGameMap";
 import { useEffect } from "react";
-
-const InGame = ({ socket, tiles }) => {
+import axios from "axios";
+const InGame = ({ socketRef, tiles }) => {
     useEffect(() => {
-        socket?.on("connect", () => {});
+        (async () => {
+            try {
+                // send the users map
+                await axios.post("/submit", tiles); // send the map
+            } catch (e) {
+                // not sending the map is a fatal error meaning this user can not play and will therefore close the socket
+                alert(`Something went wrong: ${e.message}`);
+                socketRef.current.disconnect();
+            }
+        })();
+    }, [tiles, socketRef]);
 
-        socket?.on("disconnect", () => {
+    useEffect(() => {
+        socketRef.current?.on("connect", () => {});
+
+        socketRef.current?.on("disconnect", () => {
             alert("Socket disconnected");
         });
-    }, [socket]);
+    }, [socketRef]);
 
     return (
         <>
-            <InGameMap mapData={tiles} socket={socket} />
+            <InGameMap mapData={tiles} socketRef={socketRef} />
         </>
     );
 };

@@ -2,7 +2,7 @@ import { useRef, useState, useMemo } from "react";
 import { deleteTiles } from "./utils";
 import InspectTile from "../InspectTile";
 import Category from "./category";
-import { Button, Divider } from "@mui/material";
+import { Button, CircularProgress, Divider } from "@mui/material";
 
 const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
     const [rotation, setRotation] = useState(0);
@@ -52,7 +52,7 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
                 )}
             </div>
             <Divider> Tools </Divider>
-            {tools && (
+            {tools ? (
                 <>
                     <div
                         style={{
@@ -126,6 +126,10 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
                         />
                     )}
                 </>
+            ) : (
+                <div style={{ textAlign: "center" }}>
+                    <CircularProgress />
+                </div>
             )}
         </>
     );
