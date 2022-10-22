@@ -24,21 +24,6 @@ const PlaceCompulsory = ({
 
     const currentPlacement = compulsoryPlacements[currentIndex];
 
-    const handleBack = () => {
-        setTiles(deleteTiles(compulsoryTools, tiles, blockPlacements.pop())); // remove the last placed tile
-        setCurrentIndex(currentIndex - 1); // go back a stage
-    };
-
-    const clickCallback = (location) => {
-        modifyCallback(location);
-        const copyBlockPlacements = [...blockPlacements];
-        const splitLocation = location.split(",");
-        const coords = { col: splitLocation[0], row: splitLocation[1] };
-        copyBlockPlacements.push(coords);
-        setBlockPlacements(copyBlockPlacements);
-        setCurrentIndex(currentIndex + 1);
-    };
-
     const modifyCallback = useCallback(
         (stringCoords) => {
             let copyTiles = [...tiles];
@@ -64,6 +49,28 @@ const PlaceCompulsory = ({
         [tiles, setTiles, currentPlacement]
     );
 
+    const handleBack = () => {
+        setTiles(deleteTiles(compulsoryTools, tiles, blockPlacements.pop())); // remove the last placed tile
+        setCurrentIndex(currentIndex - 1); // go back a stage
+    };
+
+    const clickCallback = (location) => {
+        modifyCallback(location);
+        const copyBlockPlacements = [...blockPlacements];
+        const splitLocation = location.split(",");
+        const coords = { col: splitLocation[0], row: splitLocation[1] };
+        copyBlockPlacements.push(coords);
+        setBlockPlacements(copyBlockPlacements);
+        setCurrentIndex(currentIndex + 1);
+    };
+
+    const clearAllPlaced = () => {
+        blockPlacements.forEach((coords) => {
+            deleteTiles(compulsoryTools, tiles, coords);
+        });
+        setBlockPlacements([]);
+    };
+
     return (
         <div style={{ display: "flex", height: "100%" }}>
             <div
@@ -85,10 +92,20 @@ const PlaceCompulsory = ({
                 <div
                     style={{ display: "flex", justifyContent: "space-around" }}
                 >
-                    <Button variant="contained" onClick={backModule}>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            clearAllPlaced();
+                            backModule();
+                        }}
+                    >
                         Back to Map Creator
                     </Button>
-                    <Button variant="contained" onClick={nextModule}>
+                    <Button
+                        variant="contained"
+                        onClick={nextModule}
+                        disabled={currentIndex !== compulsoryPlacements.length}
+                    >
                         Submit
                     </Button>
                 </div>
