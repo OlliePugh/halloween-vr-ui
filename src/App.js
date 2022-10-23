@@ -92,7 +92,7 @@ function App() {
                 <InQueue
                     socketRef={socketRef}
                     nextModule={nextModule}
-                    setIsDuplicatePage
+                    setIsDuplicatePage={setIsDuplicatePage}
                 />
             ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
                 <PlaceCompulsory

@@ -6,7 +6,8 @@ const SOCKET_EVENTS = {
     MISSING_CLIENT_ID: "missing_client_id",
     MULTIPLE_SOCKETS: "multiple_sockets",
     QUEUE_POSITION_UPDATE: "queue_position_update",
-    GAME_STARTING: "game_starting"
+    GAME_STARTING: "game_starting",
+    GAME_READY: "game_ready"
 };
 
 export default SOCKET_EVENTS;

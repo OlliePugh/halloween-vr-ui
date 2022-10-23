@@ -3,7 +3,7 @@ import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { CELL_WIDTH } from "../consts";
-const InGameMap = ({ mapData, socketRef }) => {
+const InGameMap = ({ mapData, socketRef, isReady }) => {
     const [selectedEvent, setSelectedEvent] = useState();
 
     const [interactiveTiles, setInteractiveTiles] = useState({});
@@ -134,7 +134,18 @@ const InGameMap = ({ mapData, socketRef }) => {
     };
 
     return (
-        <div style={{ display: "flex", height: "100%" }}>
+        <div
+            style={{
+                display: "flex",
+                height: "100%",
+                ...(!isReady && {
+                    // blur it out
+                    filter: "blur(5px)",
+                    msFilter: "blur(5px)",
+                    WebkitFilter: "blur(5px)"
+                })
+            }}
+        >
             <div
                 style={{
                     display: "inline-block",

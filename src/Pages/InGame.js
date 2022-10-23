@@ -1,7 +1,11 @@
 import InGameMap from "../InGameMap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import GameNotReady from "../GameNotReady";
+import SOCKET_EVENTS from "../SOCKET_EVENTS";
 const InGame = ({ socketRef, tiles }) => {
+    const [isGameReady, setIsGameReady] = useState(false); // TODO MAKE SURE THIS IS SET BACK TO FALSE WHEN YOU LEAVE THIS PAGE
+
     useEffect(() => {
         (async () => {
             try {
@@ -21,11 +25,22 @@ const InGame = ({ socketRef, tiles }) => {
         socketRef.current?.on("disconnect", () => {
             alert("Socket disconnected");
         });
+
+        socketRef.current
+            ?.off(SOCKET_EVENTS.GAME_READY)
+            .on(SOCKET_EVENTS.GAME_READY, () => {
+                setIsGameReady(true);
+            });
     }, [socketRef]);
 
     return (
         <>
-            <InGameMap mapData={tiles} socketRef={socketRef} />
+            {!isGameReady && <GameNotReady />}
+            <InGameMap
+                mapData={tiles}
+                socketRef={socketRef}
+                isReady={isGameReady}
+            />
         </>
     );
 };
