@@ -19,6 +19,15 @@ const MapTile = ({
 
     const isParent = data?.parent.col === col && data?.parent.row === row;
 
+    let displayName = data?.type.name;
+    if (data?.shelfItems?.length > 0) {
+        displayName += " with";
+        data?.shelfItems.forEach((item) => {
+            displayName += ` ${item}`;
+        });
+        displayName += " on top";
+    }
+
     return (
         <div
             onClick={() => {
@@ -62,7 +71,7 @@ const MapTile = ({
                 >
                     {isHoveringOver && hoverData.name
                         ? hoverData.name
-                        : data?.type.name}
+                        : displayName}
                 </p>
             </div>
         </div>

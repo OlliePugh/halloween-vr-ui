@@ -53,6 +53,23 @@ export const placeBlock = (
     return newTiles;
 };
 
+export const addToShelf = (tiles, { row, col }, type) => {
+    const newTiles = [...tiles];
+    const placedTile = newTiles[col][row];
+    if (!placedTile || !placedTile?.type.hasShelf) {
+        throw new Error(ERRORS.NOT_A_SHELF);
+    }
+
+    if (placedTile.shelfItems) {
+        // if it already exists
+        placedTile.shelfItems.push(type.key);
+    } else {
+        placedTile.shelfItems = [type.key];
+    }
+
+    return newTiles;
+};
+
 const getAmountOfTile = (tiles, type) => {
     let counter = 0;
     tiles.forEach((columns) => {
@@ -102,6 +119,25 @@ export const deleteTiles = (tools, tiles, clickedPos) => {
     occupyingCells.forEach(([col, row]) => {
         newTiles[col][row] = null;
     });
+    return newTiles;
+};
+
+export const removeFromShelf = (tiles, { row, col }, itemToRemove) => {
+    const newTiles = [...tiles];
+    const tileToModify = newTiles[col][row];
+
+    if (!tileToModify?.type || !tileToModify.shelfItems) {
+        // is there anything on that tile
+        return newTiles;
+    }
+    // loop through each item on the shelf
+    const itemIndex = tileToModify.shelfItems.indexOf(itemToRemove);
+
+    if (itemIndex === -1) {
+        return newTiles;
+    }
+
+    tileToModify.shelfItems.splice(itemIndex, 1); // remvoe it from the array
     return newTiles;
 };
 

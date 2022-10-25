@@ -3,7 +3,12 @@ import { CELL_WIDTH } from "../consts";
 import { Button, Divider } from "@mui/material";
 import { useState, useMemo, useCallback } from "react";
 import CompulsoryProgress from "../CompulsoryProgress";
-import { placeBlock, deleteTiles } from "../Toolbar/utils";
+import {
+    placeBlock,
+    deleteTiles,
+    addToShelf,
+    removeFromShelf
+} from "../Toolbar/utils";
 import axios from "axios";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 
@@ -27,18 +32,20 @@ const PlaceCompulsory = ({
 
     const currentPlacement = compulsoryPlacements[currentIndex];
 
-    const modifyCallback = useCallback(
-        (stringCoords) => {
+    const finishPlacement = (location) => {
+        const copyBlockPlacements = [...blockPlacements];
+        copyBlockPlacements.push(location);
+        setBlockPlacements(copyBlockPlacements);
+        setCurrentIndex(currentIndex + 1);
+    };
+
+    const placeOnEmpty = useCallback(
+        ({ row, col }) => {
             let copyTiles = [...tiles];
-            const coords = stringCoords.split(",");
-            const location = {
-                row: parseInt(coords[1]),
-                col: parseInt(coords[0])
-            };
 
             const newTiles = placeBlock(
                 copyTiles,
-                location,
+                { row, col },
                 { width: 1, height: 1 },
                 null,
                 {
@@ -48,29 +55,63 @@ const PlaceCompulsory = ({
                 }
             );
             setTiles(newTiles);
+            finishPlacement({ row, col });
+        },
+        [tiles, setTiles, currentPlacement]
+    );
+
+    const placeOnShelf = useCallback(
+        ({ row, col }) => {
+            let copyTiles = [...tiles];
+
+            const newTiles = addToShelf(
+                copyTiles,
+                { row, col },
+                {
+                    ...currentPlacement,
+                    key: currentPlacement.key,
+                    name: currentPlacement.name || currentPlacement.key
+                }
+            );
+            setTiles(newTiles);
+            finishPlacement({ row, col });
         },
         [tiles, setTiles, currentPlacement]
     );
 
     const handleBack = () => {
-        setTiles(deleteTiles(compulsoryTools, tiles, blockPlacements.pop())); // remove the last placed tile
+        const newTiles = cleanUpTile(
+            compulsoryPlacements[currentIndex - 1],
+            blockPlacements.pop()
+        );
+        setTiles(newTiles); // remove the last placed tile
         setCurrentIndex(currentIndex - 1); // go back a stage
     };
 
-    const clickCallback = (location) => {
-        modifyCallback(location);
-        const copyBlockPlacements = [...blockPlacements];
-        const splitLocation = location.split(",");
-        const coords = { col: splitLocation[0], row: splitLocation[1] };
-        copyBlockPlacements.push(coords);
-        setBlockPlacements(copyBlockPlacements);
-        setCurrentIndex(currentIndex + 1);
+    const cleanUpTile = (currentTool, { col, row }) => {
+        let newTiles = [...tiles];
+        const blockAtTile = newTiles[col][row];
+
+        if (blockAtTile.type.key === currentTool.key) {
+            newTiles = deleteTiles(compulsoryTools, newTiles, {
+                row,
+                col
+            });
+        } else {
+            newTiles = removeFromShelf(newTiles, { row, col }, currentTool.key);
+            // must be on a shelf
+        }
+
+        return newTiles;
     };
 
     const clearAllPlaced = () => {
-        blockPlacements.forEach((coords) => {
-            deleteTiles(compulsoryTools, tiles, coords);
+        let newTiles = [...tiles];
+        blockPlacements.forEach(({ row, col }, index) => {
+            const currentPlacement = compulsoryPlacements[index];
+            newTiles = cleanUpTile(currentPlacement, { col, row });
         });
+        setTiles(newTiles);
         setBlockPlacements([]);
     };
 
@@ -124,12 +165,26 @@ const PlaceCompulsory = ({
             >
                 {tiles.map((col, colNum) => {
                     return col.map((tile, rowNum) => {
+                        const isShelfPlaceable =
+                            tile?.type.hasShelf &&
+                            currentPlacement?.shelfPlaced;
+                        const canModify =
+                            (!tile || isShelfPlaceable) && currentPlacement;
+
+                        const displayName =
+                            currentPlacement?.name || currentPlacement?.key;
                         return (
                             <MapTile
                                 modifyCallback={() => {
-                                    !tile &&
-                                        currentPlacement &&
-                                        clickCallback(`${colNum},${rowNum}`);
+                                    const callback = isShelfPlaceable
+                                        ? placeOnShelf
+                                        : placeOnEmpty;
+
+                                    canModify &&
+                                        callback({
+                                            col: colNum,
+                                            row: rowNum
+                                        });
                                 }}
                                 cellWidth={CELL_WIDTH}
                                 data={tile}
@@ -140,11 +195,10 @@ const PlaceCompulsory = ({
                                     tile?.type.key
                                 )}
                                 hoverData={
-                                    !tile &&
-                                    currentPlacement && {
-                                        name:
-                                            currentPlacement?.name ||
-                                            currentPlacement?.key,
+                                    canModify && {
+                                        name: isShelfPlaceable
+                                            ? `Place ${displayName} on top of ${tile?.type.key}`
+                                            : displayName,
                                         style: { backgroundColor: "teal" }
                                     }
                                 }

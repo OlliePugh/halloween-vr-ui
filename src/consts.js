@@ -1,12 +1,14 @@
 export const ERRORS = {
     OVERLAPPING_BLOCK: "overlapping_block",
-    MAX_BLOCK_REACHED: "max_block_reached"
+    MAX_BLOCK_REACHED: "max_block_reached",
+    NOT_A_SHELF: "not_a_shelf"
 };
 
 export const ERROR_MESSAGES = {
     [ERRORS.OVERLAPPING_BLOCK]: "Something is in the way!",
     [ERRORS.MAX_BLOCK_REACHED]:
-        "You have placed the maximum amount of this item!"
+        "You have placed the maximum amount of this item!",
+    [ERRORS.NOT_A_SHELF]: "You cannot place things on top of that block!"
 };
 
 export const MODULES = {
