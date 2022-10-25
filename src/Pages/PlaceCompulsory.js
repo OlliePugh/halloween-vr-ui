@@ -9,8 +9,6 @@ import {
     addToShelf,
     removeFromShelf
 } from "../Toolbar/utils";
-import axios from "axios";
-import SOCKET_EVENTS from "../SOCKET_EVENTS";
 
 const PlaceCompulsory = ({
     compulsoryTools,
@@ -32,12 +30,15 @@ const PlaceCompulsory = ({
 
     const currentPlacement = compulsoryPlacements[currentIndex];
 
-    const finishPlacement = (location) => {
-        const copyBlockPlacements = [...blockPlacements];
-        copyBlockPlacements.push(location);
-        setBlockPlacements(copyBlockPlacements);
-        setCurrentIndex(currentIndex + 1);
-    };
+    const finishPlacement = useCallback(
+        (location) => {
+            const copyBlockPlacements = [...blockPlacements];
+            copyBlockPlacements.push(location);
+            setBlockPlacements(copyBlockPlacements);
+            setCurrentIndex(currentIndex + 1);
+        },
+        [blockPlacements, setBlockPlacements, setCurrentIndex, currentIndex]
+    );
 
     const placeOnEmpty = useCallback(
         ({ row, col }) => {
@@ -57,7 +58,7 @@ const PlaceCompulsory = ({
             setTiles(newTiles);
             finishPlacement({ row, col });
         },
-        [tiles, setTiles, currentPlacement]
+        [tiles, setTiles, currentPlacement, finishPlacement]
     );
 
     const placeOnShelf = useCallback(
@@ -76,7 +77,7 @@ const PlaceCompulsory = ({
             setTiles(newTiles);
             finishPlacement({ row, col });
         },
-        [tiles, setTiles, currentPlacement]
+        [tiles, setTiles, currentPlacement, finishPlacement]
     );
 
     const handleBack = () => {

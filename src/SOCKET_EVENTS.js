@@ -7,7 +7,8 @@ const SOCKET_EVENTS = {
     MULTIPLE_SOCKETS: "multiple_sockets",
     QUEUE_POSITION_UPDATE: "queue_position_update",
     GAME_STARTING: "game_starting",
-    GAME_READY: "game_ready"
+    GAME_READY: "game_ready",
+    END_GAME: "end_game"
 };
 
 export default SOCKET_EVENTS;
