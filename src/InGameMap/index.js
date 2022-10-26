@@ -3,7 +3,7 @@ import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { CELL_WIDTH } from "../consts";
-const InGameMap = ({ mapData, socketRef, isReady }) => {
+const InGameMap = ({ mapData, socketRef, isReady, children }) => {
     const [selectedEvent, setSelectedEvent] = useState();
 
     const [interactiveTiles, setInteractiveTiles] = useState({});
@@ -91,6 +91,7 @@ const InGameMap = ({ mapData, socketRef, isReady }) => {
         if (tile.triggerable) {
             tile.triggerable = false;
             tile.lastCalled = Date.now();
+            console.log(propKey);
             socketRef.current.emit(SOCKET_EVENTS.TRIGGER_EVENT, propKey);
             setTimeout(() => {
                 // set it back to triggerable in the future
@@ -163,44 +164,55 @@ const InGameMap = ({ mapData, socketRef, isReady }) => {
             </div>
             <div
                 style={{
-                    display: "inline-grid",
                     width: renderMapData.length * CELL_WIDTH,
                     margin: "50px",
                     flex: 1,
-                    overflow: "scroll"
+                    overflow: "auto",
+                    boxSizing: "border-box"
                 }}
             >
-                {renderMapData.map((col, colNum) => {
-                    return col.map((tile, rowNum) => {
-                        const interactiveTile =
-                            interactiveTiles[`${colNum},${rowNum}`];
-                        return (
-                            <MapTile
-                                modifyCallback={() => {
-                                    clickCallback(`${colNum},${rowNum}`);
-                                }}
-                                cellWidth={CELL_WIDTH}
-                                data={tile}
-                                key={rowNum + "" + colNum}
-                                row={rowNum}
-                                col={colNum}
-                                colour={!!interactiveTile?.triggerable}
-                                style={{
-                                    cursor: interactiveTile ? "pointer" : "auto"
-                                }}
-                                hoverData={
-                                    selectedEvent &&
-                                    !tile && {
-                                        name:
-                                            selectedEvent?.name ||
-                                            selectedEvent?.key,
-                                        style: { backgroundColor: "red" }
+                <div
+                    style={{
+                        display: "inline-grid",
+                        boxSizing: "border-box",
+                        position: "relative"
+                    }}
+                >
+                    {children}
+                    {renderMapData.map((col, colNum) => {
+                        return col.map((tile, rowNum) => {
+                            const interactiveTile =
+                                interactiveTiles[`${colNum},${rowNum}`];
+                            return (
+                                <MapTile
+                                    modifyCallback={() => {
+                                        clickCallback(`${colNum},${rowNum}`);
+                                    }}
+                                    cellWidth={CELL_WIDTH}
+                                    data={tile}
+                                    key={rowNum + "" + colNum}
+                                    row={rowNum}
+                                    col={colNum}
+                                    colour={!!interactiveTile?.triggerable}
+                                    style={{
+                                        cursor: interactiveTile
+                                            ? "pointer"
+                                            : "auto"
+                                    }}
+                                    hoverData={
+                                        selectedEvent &&
+                                        !tile && {
+                                            name:
+                                                selectedEvent?.name ||
+                                                selectedEvent?.key,
+                                            style: { backgroundColor: "red" }
+                                        }
                                     }
-                                }
-                            />
-                        );
-                    });
-                })}
+                                />
+                            );
+                        });
+                    })}
+                </div>
             </div>
         </div>
     );

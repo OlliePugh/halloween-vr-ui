@@ -4,6 +4,7 @@ import axios from "axios";
 import GameNotReady from "../GameNotReady";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import MessagePopup from "../MessagePopup";
+import EntityLocation from "../EntityLocation";
 
 const InGame = ({ socketRef, tiles }) => {
     const [isGameReady, setIsGameReady] = useState(false); // TODO MAKE SURE THIS IS SET BACK TO FALSE WHEN YOU LEAVE THIS PAGE
@@ -66,7 +67,20 @@ const InGame = ({ socketRef, tiles }) => {
                 mapData={tiles}
                 socketRef={socketRef}
                 isReady={isGameReady}
-            />
+            >
+                <EntityLocation
+                    name="Ollie"
+                    _key="player"
+                    color="teal"
+                    socketRef={socketRef}
+                />
+                <EntityLocation
+                    name="Monster"
+                    _key="monster"
+                    color="orange"
+                    socketRef={socketRef}
+                />
+            </InGameMap>
         </>
     );
 };
