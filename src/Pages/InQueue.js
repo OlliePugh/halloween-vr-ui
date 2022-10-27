@@ -4,7 +4,13 @@ import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import io from "socket.io-client";
 
-const InQueue = ({ socketRef, nextModule, setIsDuplicatePage }) => {
+const InQueue = ({
+    socketRef,
+    nextModule,
+    setIsDuplicatePage,
+    tiles,
+    setValidatedMapToken
+}) => {
     const [queueData, setQueueData] = useState();
 
     useEffect(() => {
@@ -42,6 +48,27 @@ const InQueue = ({ socketRef, nextModule, setIsDuplicatePage }) => {
             .on(SOCKET_EVENTS.GAME_STARTING, () => {
                 console.log("lets gooo");
                 nextModule();
+            });
+
+        socketRef.current
+            .off(SOCKET_EVENTS.HANDSHAKE_COMPLETE)
+            .on(SOCKET_EVENTS.HANDSHAKE_COMPLETE, () => {
+                // once handshake is complete the map needs validatin g
+                socketRef.current.emit(SOCKET_EVENTS.VALIDATE_MAP, tiles);
+            });
+
+        socketRef.current
+            .off(SOCKET_EVENTS.MAP_VALIDITY)
+            .on(SOCKET_EVENTS.MAP_VALIDITY, ({ result, message, body }) => {
+                // once handshake is complete the map needs validatin g
+                if (result) {
+                    setValidatedMapToken(body);
+                    socketRef.current.emit(SOCKET_EVENTS.JOIN_QUEUE);
+                } else {
+                    console.log(
+                        "VALIDATION FAILED, NOW WHAT? probs best to send them back a module?"
+                    ); // TODO HANDLE THIS
+                }
             });
 
         socketRef.current.emit(SOCKET_EVENTS.HANDSHAKE); // client initialisation, may be obselete

@@ -6,7 +6,7 @@ import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import MessagePopup from "../MessagePopup";
 import EntityLocation from "../EntityLocation";
 
-const InGame = ({ socketRef, tiles }) => {
+const InGame = ({ socketRef, tiles, validatedMapToken }) => {
     const [isGameReady, setIsGameReady] = useState(false); // TODO MAKE SURE THIS IS SET BACK TO FALSE WHEN YOU LEAVE THIS PAGE
     const [modalOpen, setModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState({
@@ -23,8 +23,7 @@ const InGame = ({ socketRef, tiles }) => {
         (async () => {
             try {
                 // send the users map
-                console.log(tiles);
-                await axios.post("/submit", tiles); // send the map
+                await axios.post("/submit", { signature: validatedMapToken }); // send the map
             } catch (e) {
                 // not sending the map is a fatal error meaning this user can not play and will therefore close the socket
                 alert(`Something went wrong: ${e.message}`);

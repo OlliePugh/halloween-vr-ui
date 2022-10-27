@@ -24,6 +24,7 @@ function App() {
     const [tiles, setTiles] = useState(
         [...Array(width)].map((_) => Array(height).fill(null))
     );
+    const [validatedMapToken, setValidatedMapToken] = useState();
     const [tools, setTools] = useState();
     const [compulsoryTools, setCompulsoryTools] = useState();
 
@@ -87,12 +88,18 @@ function App() {
                     setTools={setTools}
                 />
             ) : CHAIN[currentModule] === MODULES.IN_GAME ? (
-                <InGame socketRef={socketRef} tiles={tiles} />
+                <InGame
+                    socketRef={socketRef}
+                    tiles={tiles}
+                    validatedMapToken={validatedMapToken}
+                />
             ) : CHAIN[currentModule] === MODULES.IN_QUEUE ? (
                 <InQueue
                     socketRef={socketRef}
                     nextModule={nextModule}
                     setIsDuplicatePage={setIsDuplicatePage}
+                    tiles={tiles}
+                    setValidatedMapToken={setValidatedMapToken}
                 />
             ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
                 <PlaceCompulsory
