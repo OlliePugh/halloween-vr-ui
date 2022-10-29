@@ -1,10 +1,11 @@
 import InGameMap from "../InGameMap";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import GameNotReady from "../GameNotReady";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import MessagePopup from "../MessagePopup";
 import EntityLocation from "../EntityLocation";
+import HeartRateMonitor from "../HeartRateMonitor";
 
 const InGame = ({ socketRef, tiles, validatedMapToken }) => {
     const [isGameReady, setIsGameReady] = useState(false); // TODO MAKE SURE THIS IS SET BACK TO FALSE WHEN YOU LEAVE THIS PAGE
@@ -13,6 +14,8 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
         title: "",
         content: ""
     });
+
+    const maxHeartRateRef = useRef(0);
 
     const handleClose = () => {
         setModalOpen(false);
@@ -50,7 +53,10 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
             .on(SOCKET_EVENTS.END_GAME, (message) => {
                 console.log("GOT END GAME MESSAGE");
                 setModalOpen(true);
-                setModalMessage({ title: "Game Over", message: message });
+                setModalMessage({
+                    title: "Game Over",
+                    message: `${message}\n Ollie's heart rate peaked at ${maxHeartRateRef.current}! Please share your results in the discord!`
+                });
             });
     }, [socketRef]);
 
@@ -62,6 +68,7 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
                 open={modalOpen}
                 content={modalMessage}
             />
+            <HeartRateMonitor maxHeartRateRef={maxHeartRateRef} />
             <InGameMap
                 mapData={tiles}
                 socketRef={socketRef}

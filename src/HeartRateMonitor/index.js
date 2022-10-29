@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import * as axios from "axios";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
-const HeartRateMonitor = () => {
+const HeartRateMonitor = ({ maxHeartRateRef }) => {
     const [currentHeartRate, setCurrentHeartRate] = useState();
 
     useEffect(() => {
         setInterval(async () => {
             try {
                 const bpm = (await axios.get("/bpm"))?.data;
+                if (bpm > maxHeartRateRef.current) {
+                    maxHeartRateRef.current = bpm;
+                }
                 setCurrentHeartRate(bpm);
             } catch (e) {
                 console.log("Failed to get heart rate");

@@ -137,7 +137,6 @@ const InGameMap = ({ mapData, socketRef, isReady, children }) => {
 
     return (
         <>
-            <HeartRateMonitor />
             <div
                 style={{
                     display: "flex",
