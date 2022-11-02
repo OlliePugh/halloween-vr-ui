@@ -37,6 +37,19 @@ export const CHAIN = [
     MODULES.IN_GAME
 ];
 
+export const INVALID_MAP_MESSAGES = {
+    key_not_accessable: "The key is not accessible from the spawn point!",
+    min_not_satisfied: "This map is corrupted, please create another map!",
+    max_not_satisfied: "This map is corrupted, please create another map!",
+    missing_compulsory: "You are missing a compulsory block!"
+};
+
+const DEV_ORCH_URL = "127.0.0.1:5001";
+const PROD_ORCH_URL = `api.${window.location.hostname.replace(/www./g, "")}`;
+
+export const ORCH_URL =
+    process.env.NODE_ENV === "development" ? DEV_ORCH_URL : PROD_ORCH_URL;
+
 export const MAP_WIDTH = 25;
 export const MAP_HEIGHT = 25;
 export const CELL_WIDTH = 100;

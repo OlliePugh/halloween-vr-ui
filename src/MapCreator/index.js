@@ -64,6 +64,7 @@ const MapCreator = ({ width, currentTool, nextModule, tiles, setTiles }) => {
                 style={{ float: "right" }}
                 variant="contained"
                 onClick={nextModule}
+                disabled={nextModule === null}
             >
                 Next
             </Button>

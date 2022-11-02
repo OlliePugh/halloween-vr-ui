@@ -3,20 +3,24 @@ import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { useState } from "react";
 import { CircularProgress } from "@mui/material";
 import io from "socket.io-client";
+import { INVALID_MAP_MESSAGES, ORCH_URL } from "../consts";
+import MessagePopup from "../MessagePopup";
 
 const InQueue = ({
     socketRef,
+    backModule,
     nextModule,
     setIsDuplicatePage,
     tiles,
     setValidatedMapToken
 }) => {
     const [queueData, setQueueData] = useState();
+    const [validationErrorMessage, setValidationErrorMessage] = useState();
 
     useEffect(() => {
         if (!socketRef.current) {
             // if socket has not been connected
-            socketRef.current = io("http://dev.olliepugh.com:8080", {
+            socketRef.current = io(ORCH_URL, {
                 withCredentials: true
             });
 
@@ -65,9 +69,8 @@ const InQueue = ({
                     setValidatedMapToken(body);
                     socketRef.current.emit(SOCKET_EVENTS.JOIN_QUEUE);
                 } else {
-                    console.log(
-                        "VALIDATION FAILED, NOW WHAT? probs best to send them back a module?"
-                    ); // TODO HANDLE THIS
+                    setValidationErrorMessage(message);
+                    console.log("message", message); // TODO HANDLE THIS
                 }
             });
 
@@ -75,31 +78,41 @@ const InQueue = ({
     }, [socketRef]);
 
     return (
-        <div
-            style={{
-                margin: 0,
-                position: "absolute",
-                top: "50%",
-                transform: "translateY(-50%)",
-                left: "0",
-                right: "0"
-            }}
-        >
-            {queueData ? (
-                <h1 style={{ textAlign: "center" }}>
-                    You are in position {queueData.position} out of{" "}
-                    {queueData.queueSize} in the queue
-                </h1>
-            ) : (
-                <div
-                    style={{
-                        textAlign: "center"
-                    }}
-                >
-                    <CircularProgress />
-                </div>
-            )}
-        </div>
+        <>
+            <MessagePopup
+                open={!!validationErrorMessage}
+                handleClose={backModule}
+                content={{
+                    title: "Invalid Map",
+                    message: INVALID_MAP_MESSAGES[validationErrorMessage]
+                }}
+            />
+            <div
+                style={{
+                    margin: 0,
+                    position: "absolute",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    left: "0",
+                    right: "0"
+                }}
+            >
+                {queueData ? (
+                    <h1 style={{ textAlign: "center" }}>
+                        You are in position {queueData.position} out of{" "}
+                        {queueData.queueSize} in the queue
+                    </h1>
+                ) : (
+                    <div
+                        style={{
+                            textAlign: "center"
+                        }}
+                    >
+                        <CircularProgress />
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

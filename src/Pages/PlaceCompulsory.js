@@ -16,10 +16,12 @@ const PlaceCompulsory = ({
     nextModule,
     backModule,
     setTiles,
-    socket
+    compulsoryBlockPlacements,
+    setCompulsoryBlockPlacements
 }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [blockPlacements, setBlockPlacements] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(
+        compulsoryBlockPlacements.length
+    );
     const compulsoryPlacements = useMemo(() => {
         const toReturn = [];
         for (const [key, value] of Object.entries(compulsoryTools)) {
@@ -32,12 +34,17 @@ const PlaceCompulsory = ({
 
     const finishPlacement = useCallback(
         (location) => {
-            const copyBlockPlacements = [...blockPlacements];
+            const copyBlockPlacements = [...compulsoryBlockPlacements];
             copyBlockPlacements.push(location);
-            setBlockPlacements(copyBlockPlacements);
+            setCompulsoryBlockPlacements(copyBlockPlacements);
             setCurrentIndex(currentIndex + 1);
         },
-        [blockPlacements, setBlockPlacements, setCurrentIndex, currentIndex]
+        [
+            compulsoryBlockPlacements,
+            setCompulsoryBlockPlacements,
+            setCurrentIndex,
+            currentIndex
+        ]
     );
 
     const placeOnEmpty = useCallback(
@@ -83,7 +90,7 @@ const PlaceCompulsory = ({
     const handleBack = () => {
         const newTiles = cleanUpTile(
             compulsoryPlacements[currentIndex - 1],
-            blockPlacements.pop()
+            compulsoryBlockPlacements.pop()
         );
         setTiles(newTiles); // remove the last placed tile
         setCurrentIndex(currentIndex - 1); // go back a stage
@@ -108,12 +115,12 @@ const PlaceCompulsory = ({
 
     const clearAllPlaced = () => {
         let newTiles = [...tiles];
-        blockPlacements.forEach(({ row, col }, index) => {
+        compulsoryBlockPlacements.forEach(({ row, col }, index) => {
             const currentPlacement = compulsoryPlacements[index];
             newTiles = cleanUpTile(currentPlacement, { col, row });
         });
         setTiles(newTiles);
-        setBlockPlacements([]);
+        setCompulsoryBlockPlacements([]);
     };
 
     return (
