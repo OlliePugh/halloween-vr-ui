@@ -16,6 +16,7 @@ import ProgressIndicator from "./ProgressIndicator";
 import PlaceCompulsory from "./Pages/PlaceCompulsory";
 import InQueue from "./Pages/InQueue";
 import OfflinePopup from "./OfflinePopup";
+import Footer from "./Footer";
 
 axios.defaults.baseURL = "http://" + ORCH_URL.replace(/www./g, ""); // remove any www.
 axios.defaults.withCredentials = true;
@@ -89,46 +90,63 @@ function App() {
                 />
             )}
             {!isOnline && <OfflinePopup />}
-            <ProgressIndicator currentModule={currentModule} />
-            {CHAIN[currentModule] === MODULES.MAP_MAKER ? (
-                <MapMaker
-                    nextModule={isOnline ? nextModule : null}
-                    backModule={backModule}
-                    tiles={tiles}
-                    setTiles={setTiles}
-                    width={width}
-                    tools={tools}
-                    setTools={setTools}
-                />
-            ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
-                <PlaceCompulsory
-                    tiles={tiles}
-                    compulsoryTools={compulsoryTools}
-                    nextModule={nextModule}
-                    backModule={backModule}
-                    setTiles={setTiles}
-                    socketRef={socketRef}
-                    compulsoryBlockPlacements={compulsoryBlockPlacements}
-                    setCompulsoryBlockPlacements={setCompulsoryBlockPlacements}
-                />
-            ) : CHAIN[currentModule] === MODULES.IN_QUEUE ? (
-                <InQueue
-                    socketRef={socketRef}
-                    backModule={backModule}
-                    nextModule={nextModule}
-                    setIsDuplicatePage={setIsDuplicatePage}
-                    tiles={tiles}
-                    setValidatedMapToken={setValidatedMapToken}
-                />
-            ) : CHAIN[currentModule] === MODULES.IN_GAME ? (
-                <InGame
-                    socketRef={socketRef}
-                    tiles={tiles}
-                    validatedMapToken={validatedMapToken}
-                />
-            ) : (
-                <></>
-            )}
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "100%"
+                }}
+            >
+                <div style={{ borderBottom: "1px solid black" }}>
+                    <ProgressIndicator currentModule={currentModule} />
+                </div>
+                <div style={{ flex: 1, overflow: "auto" }}>
+                    {CHAIN[currentModule] === MODULES.MAP_MAKER ? (
+                        <MapMaker
+                            nextModule={isOnline ? nextModule : null}
+                            backModule={backModule}
+                            tiles={tiles}
+                            setTiles={setTiles}
+                            width={width}
+                            tools={tools}
+                            setTools={setTools}
+                        />
+                    ) : CHAIN[currentModule] === MODULES.PLACE_REQUIRED ? (
+                        <PlaceCompulsory
+                            tiles={tiles}
+                            compulsoryTools={compulsoryTools}
+                            nextModule={nextModule}
+                            backModule={backModule}
+                            setTiles={setTiles}
+                            socketRef={socketRef}
+                            compulsoryBlockPlacements={
+                                compulsoryBlockPlacements
+                            }
+                            setCompulsoryBlockPlacements={
+                                setCompulsoryBlockPlacements
+                            }
+                        />
+                    ) : CHAIN[currentModule] === MODULES.IN_QUEUE ? (
+                        <InQueue
+                            socketRef={socketRef}
+                            backModule={backModule}
+                            nextModule={nextModule}
+                            setIsDuplicatePage={setIsDuplicatePage}
+                            tiles={tiles}
+                            setValidatedMapToken={setValidatedMapToken}
+                        />
+                    ) : CHAIN[currentModule] === MODULES.IN_GAME ? (
+                        <InGame
+                            socketRef={socketRef}
+                            tiles={tiles}
+                            validatedMapToken={validatedMapToken}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </div>
+                <Footer />
+            </div>
         </div>
     );
 }

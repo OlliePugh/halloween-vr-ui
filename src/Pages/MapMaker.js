@@ -16,13 +16,20 @@ const MapMaker = ({
     });
 
     return (
-        <div style={{ display: "flex", height: "100%" }}>
+        <div
+            style={{
+                display: "flex",
+                height: "100%"
+            }}
+        >
             <div
                 style={{
                     display: "inline-block",
                     height: "100%",
                     width: "200px",
-                    backgroundColor: "grey"
+                    borderRight: "1px solid black",
+                    backgroundColor: "grey",
+                    overflow: "auto"
                 }}
             >
                 <Toolbar

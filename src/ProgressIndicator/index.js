@@ -7,7 +7,12 @@ import { CHAIN } from "../consts";
 
 const ProgressIndicator = ({ currentModule }) => {
     return (
-        <Box sx={{ width: "30%", margin: "0 auto" }}>
+        <Box
+            sx={{
+                width: "30%",
+                margin: "0 auto"
+            }}
+        >
             <Stepper activeStep={currentModule}>
                 {CHAIN.map((module, _) => {
                     return (

@@ -1,7 +1,14 @@
 import { ERROR_MESSAGES } from "../consts";
 import { placeBlock } from "./utils";
 import { Button } from "@mui/material";
-const Tool = ({ toolName, setCurrentTool, tool, rotationRef, disabled }) => {
+const Tool = ({
+    toolName,
+    setCurrentTool,
+    tool,
+    rotationRef,
+    disabled,
+    setBuildMessage
+}) => {
     return (
         <div>
             <Button
@@ -25,7 +32,7 @@ const Tool = ({ toolName, setCurrentTool, tool, rotationRef, disabled }) => {
                                 );
                             } catch (e) {
                                 if (!ignoredExceptions?.includes(e.message)) {
-                                    alert(ERROR_MESSAGES[e.message]);
+                                    setBuildMessage(ERROR_MESSAGES[e.message]);
                                 }
                                 return tiles;
                             }

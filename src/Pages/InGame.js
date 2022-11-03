@@ -33,7 +33,7 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
                 socketRef.current.disconnect();
             }
         })();
-    }, [tiles, socketRef]);
+    }, [tiles, socketRef, validatedMapToken]);
 
     useEffect(() => {
         socketRef.current?.on("connect", () => {});

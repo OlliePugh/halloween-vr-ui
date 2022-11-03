@@ -3,7 +3,7 @@ import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { CELL_WIDTH } from "../consts";
-import HeartRateMonitor from "../HeartRateMonitor";
+
 const InGameMap = ({ mapData, socketRef, isReady, children }) => {
     const [selectedEvent, setSelectedEvent] = useState();
 

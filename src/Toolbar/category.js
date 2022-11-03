@@ -9,7 +9,8 @@ const Category = ({
     category,
     setCurrentTool,
     currentTool,
-    rotationRef
+    rotationRef,
+    setBuildMessage
 }) => {
     const toolComponents = [];
 
@@ -22,6 +23,7 @@ const Category = ({
                 setCurrentTool={setCurrentTool}
                 disabled={currentTool.name === toolName}
                 rotationRef={rotationRef}
+                setBuildMessage={setBuildMessage}
             />
         );
     });

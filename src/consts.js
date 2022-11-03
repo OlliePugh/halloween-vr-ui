@@ -44,7 +44,7 @@ export const INVALID_MAP_MESSAGES = {
     missing_compulsory: "You are missing a compulsory block!"
 };
 
-const DEV_ORCH_URL = "127.0.0.1:5001";
+const DEV_ORCH_URL = "localhost:5001";
 const PROD_ORCH_URL = `api.${window.location.hostname.replace(/www./g, "")}`;
 
 export const ORCH_URL =

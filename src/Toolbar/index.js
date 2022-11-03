@@ -3,9 +3,11 @@ import { deleteTiles } from "./utils";
 import InspectTile from "../InspectTile";
 import Category from "./category";
 import { Button, CircularProgress, Divider } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 
 const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
     const [rotation, setRotation] = useState(0);
+    const [buildMessage, setBuildMessage] = useState();
 
     const categorisedTools = useMemo(() => {
         if (tools) {
@@ -41,6 +43,24 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
 
     return (
         <>
+            <Snackbar
+                open={!!buildMessage}
+                autoHideDuration={6000}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                onClose={() => {
+                    setBuildMessage();
+                }}
+            >
+                <Alert
+                    onClose={() => {
+                        setBuildMessage();
+                    }}
+                    severity="error"
+                    sx={{ width: "100%" }}
+                >
+                    {buildMessage}
+                </Alert>
+            </Snackbar>
             <div style={{ height: "200px" }}>
                 <h2>{currentTool?.name}</h2>
                 {currentTool?.dimensions && (
@@ -100,6 +120,7 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
                             setCurrentTool={setCurrentTool}
                             rotationRef={rotationRef}
                             currentTool={currentTool}
+                            setBuildMessage={setBuildMessage}
                         />
                     )}
                     {Object.entries(copyTools).map(
@@ -112,6 +133,7 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
                                     setCurrentTool={setCurrentTool}
                                     rotationRef={rotationRef}
                                     currentTool={currentTool}
+                                    setBuildMessage={setBuildMessage}
                                 />
                             );
                         }
@@ -123,6 +145,7 @@ const Toolbar = ({ setCurrentTool, currentTool, tools }) => {
                             setCurrentTool={setCurrentTool}
                             rotationRef={rotationRef}
                             currentTool={currentTool}
+                            setBuildMessage={setBuildMessage}
                         />
                     )}
                 </>

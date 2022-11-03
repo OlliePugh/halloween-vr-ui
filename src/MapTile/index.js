@@ -62,7 +62,7 @@ const MapTile = ({
                     style={{
                         margin: 0,
                         textAlign: "center",
-                        color: tileStyle.textColour,
+                        color: colour ? tileStyle.textColour : "black",
                         transform: `rotate(${
                             data?.rotation * (-180 / Math.PI)
                         }deg)`,
