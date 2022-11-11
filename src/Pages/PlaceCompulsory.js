@@ -9,6 +9,7 @@ import {
     addToShelf,
     removeFromShelf
 } from "../Toolbar/utils";
+import Sidebar from "../Sidebar";
 
 const PlaceCompulsory = ({
     compulsoryTools,
@@ -125,14 +126,7 @@ const PlaceCompulsory = ({
 
     return (
         <div style={{ display: "flex", height: "100%" }}>
-            <div
-                style={{
-                    display: "inline-block",
-                    height: "100%",
-                    width: "200px",
-                    backgroundColor: "grey"
-                }}
-            >
+            <Sidebar>
                 <div style={{ marginLeft: "10px" }}>
                     <CompulsoryProgress
                         handleBack={handleBack}
@@ -161,7 +155,7 @@ const PlaceCompulsory = ({
                         Submit
                     </Button>
                 </div>
-            </div>
+            </Sidebar>
             <div
                 style={{
                     display: "inline-grid",

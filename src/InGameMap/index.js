@@ -3,6 +3,7 @@ import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
 import { CELL_WIDTH } from "../consts";
+import Sidebar from "../Sidebar";
 
 const InGameMap = ({ mapData, socketRef, isReady, children }) => {
     const [selectedEvent, setSelectedEvent] = useState();
@@ -149,21 +150,14 @@ const InGameMap = ({ mapData, socketRef, isReady, children }) => {
                     })
                 }}
             >
-                <div
-                    style={{
-                        display: "inline-block",
-                        height: "100%",
-                        width: "200px",
-                        backgroundColor: "grey"
-                    }}
-                >
+                <Sidebar>
                     <NonBlockEventsToolbar
                         selectedEvent={selectedEvent}
                         setSelectedEvent={setSelectedEvent}
                         dispatchNonBlockEvent={dispatchNonBlockEvent}
                         runningNonTileBlocks={runningNonTileBlocks}
                     />
-                </div>
+                </Sidebar>
                 <div
                     style={{
                         width: renderMapData.length * CELL_WIDTH,

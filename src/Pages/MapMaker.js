@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MapCreator from "../MapCreator";
+import Sidebar from "../Sidebar";
 import Toolbar from "../Toolbar";
 
 const MapMaker = ({
@@ -22,22 +23,13 @@ const MapMaker = ({
                 height: "100%"
             }}
         >
-            <div
-                style={{
-                    display: "inline-block",
-                    height: "100%",
-                    width: "200px",
-                    borderRight: "1px solid black",
-                    backgroundColor: "grey",
-                    overflow: "auto"
-                }}
-            >
+            <Sidebar>
                 <Toolbar
                     setCurrentTool={setCurrentTool}
                     currentTool={currentTool}
                     tools={tools}
                 />
-            </div>
+            </Sidebar>
             <div
                 style={{
                     flex: 1,

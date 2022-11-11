@@ -18,7 +18,9 @@ import InQueue from "./Pages/InQueue";
 import OfflinePopup from "./OfflinePopup";
 import Footer from "./Footer";
 
-axios.defaults.baseURL = "http://" + ORCH_URL.replace(/www./g, ""); // remove any www.
+axios.defaults.baseURL =
+    (process.env.NODE_ENV === "development" ? "http://" : "https://") +
+    ORCH_URL.replace(/www./g, ""); // remove any www.
 axios.defaults.withCredentials = true;
 
 function App() {
