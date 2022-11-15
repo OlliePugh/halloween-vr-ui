@@ -53,3 +53,4 @@ export const ORCH_URL =
 export const MAP_WIDTH = 25;
 export const MAP_HEIGHT = 25;
 export const CELL_WIDTH = 100;
+export const MONSTER_SPAWN_SAFE_ZONE = 3.5;

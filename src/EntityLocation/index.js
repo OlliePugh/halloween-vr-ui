@@ -1,7 +1,7 @@
 import { CELL_WIDTH } from "../consts";
 import { useState, useEffect } from "react";
 
-const EntityLocation = ({ name, color, _key, socketRef }) => {
+const EntityLocation = ({ name, color, _key, socketRef, locationRef }) => {
     const [entityLocation, setEntityLocation] = useState();
     useEffect(() => {
         socketRef.current
@@ -10,6 +10,13 @@ const EntityLocation = ({ name, color, _key, socketRef }) => {
                 setEntityLocation(location);
             });
     }, [socketRef, _key]);
+
+    useEffect(() => {
+        if (locationRef) {
+            locationRef.current = entityLocation;
+        }
+    }, [entityLocation, locationRef]);
+
     return (
         <>
             {entityLocation && (

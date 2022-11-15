@@ -2,14 +2,23 @@ import { useEffect, useState, useRef } from "react";
 import MapTile from "../MapTile";
 import NonBlockEventsToolbar from "../NonBlockEventsToolbar";
 import SOCKET_EVENTS from "../SOCKET_EVENTS";
-import { CELL_WIDTH } from "../consts";
+import { CELL_WIDTH, MONSTER_SPAWN_SAFE_ZONE } from "../consts";
 import Sidebar from "../Sidebar";
+import { Snackbar, Alert } from "@mui/material";
 
-const InGameMap = ({ mapData, socketRef, isReady, children }) => {
+const InGameMap = ({
+    mapData,
+    socketRef,
+    isReady,
+    children,
+    ollieLocationRef
+}) => {
     const [selectedEvent, setSelectedEvent] = useState();
 
     const [interactiveTiles, setInteractiveTiles] = useState({});
     const [runningNonTileBlocks, setRunningNonTileBlocks] = useState({});
+
+    const [errorMessage, setErrorMessage] = useState();
 
     const [renderMapData, setRenderedMapData] = useState(
         JSON.parse(JSON.stringify(mapData))
@@ -81,6 +90,20 @@ const InGameMap = ({ mapData, socketRef, isReady, children }) => {
     /* eslint-enable */
     const clickCallback = (propKey) => {
         if (selectedEvent) {
+            if (selectedEvent.key === "SpawnMonster") {
+                // check if the spawn point is too close to me
+                const clickPosition = propKey.split(",");
+                const a = clickPosition[0] - ollieLocationRef.current.col;
+                const b = clickPosition[1] - ollieLocationRef.current.row;
+                const c = Math.sqrt(a * a + b * b);
+
+                if (c < MONSTER_SPAWN_SAFE_ZONE) {
+                    setErrorMessage(
+                        "Can't spawn the monster too close to ollie!"
+                    );
+                    return;
+                }
+            }
             addNonTilePositionalEvent(propKey);
             return; // do not try and trigger a tile event
         }
@@ -150,6 +173,24 @@ const InGameMap = ({ mapData, socketRef, isReady, children }) => {
                     })
                 }}
             >
+                <Snackbar
+                    open={!!errorMessage}
+                    autoHideDuration={6000}
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                    onClose={() => {
+                        setErrorMessage();
+                    }}
+                >
+                    <Alert
+                        onClose={() => {
+                            setErrorMessage();
+                        }}
+                        severity="error"
+                        sx={{ width: "100%" }}
+                    >
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
                 <Sidebar>
                     <NonBlockEventsToolbar
                         selectedEvent={selectedEvent}

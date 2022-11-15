@@ -24,10 +24,6 @@ const InQueue = ({
                 withCredentials: true
             });
 
-            socketRef.current.onAny((m) => {
-                console.log(m);
-            });
-
             socketRef.current.on(SOCKET_EVENTS.MULTIPLE_SOCKETS, () => {
                 // TODO can this be replaced with when joining the queue will disconnect the socket currently in the queue?
                 setIsDuplicatePage(true);

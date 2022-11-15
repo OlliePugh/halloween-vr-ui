@@ -15,6 +15,7 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
         content: ""
     });
 
+    const ollieLocationRef = useRef({ row: 0, column: 0 });
     const maxHeartRateRef = useRef(0);
 
     const handleClose = () => {
@@ -73,12 +74,14 @@ const InGame = ({ socketRef, tiles, validatedMapToken }) => {
                 mapData={tiles}
                 socketRef={socketRef}
                 isReady={isGameReady}
+                ollieLocationRef={ollieLocationRef}
             >
                 <EntityLocation
                     name="Ollie"
                     _key="player"
                     color="teal"
                     socketRef={socketRef}
+                    locationRef={ollieLocationRef}
                 />
                 <EntityLocation
                     name="Monster"
